@@ -1,11 +1,40 @@
 @baseurl = http://localhost:3000
+@token-jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6IkdhYnJpZWwgR29kb2kiLCJ1c2VyRW1haWwiOiJnYWJyaWVsR29kb2lAZW1haWwuY29tIiwiaWF0IjoxNzc5MjE4MzU0LCJleHAiOjE3NzkyMjE5NTR9.nvXKBUYv-BmhooupBbEeY2Z3Cg6B1V4RajR0UGeK6gg
 
 ### Create a new user
 # @name CreateUserAction
-POST @baseurl/users
+POST {{baseurl}}/users
 Content-Type: application/json
+Authorization: Bearer token-jwt
+
 {
   "name": "John Doe",
   "email": "johndoe@email.com",
-  "password": "123456",
+  "password": "Strong1Pass"
 }
+
+### List all users
+# @name FindAllUsersAction
+GET {{baseurl}}/users
+
+### Find user by ID
+# @name FindUserByIdAction
+GET {{baseurl}}/users/{{CreateUserAction.response.body.id}}
+
+### Find user by email
+# @name FindUserByEmailAction
+GET {{baseurl}}/users/search?email={{CreateUserAction.response.body.email}}
+
+### Update created user
+# @name UpdateUserAction
+PUT {{baseurl}}/users/{{CreateUserAction.response.body.id}}
+Content-Type: application/json
+
+{
+  "name": "John Doe Updated",
+  "email": "johndoe@email.com"
+}
+
+### Delete created user
+# @name DeleteUserAction
+DELETE {{baseurl}}/users/{{CreateUserAction.response.body.id}}

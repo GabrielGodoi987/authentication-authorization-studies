@@ -10,19 +10,22 @@ export class AuthUseCase {
       new FindUserByEmailSpec(email),
     );
 
+    console.log("User id found? ");
+    console.log(user);
+
     if (!user || !bcrypt.compareSync(password, user.getPassword())) {
       throw new Error("Invalid credentials");
     }
 
     // Using HS256 algorithm by default, but you can specify others if needed
-    const token = jwt.sign(
+    const accessToken = jwt.sign(
       { userName: user.getName(), userEmail: user.getEmail() },
-      process.env.JWT_SECRET || "default_secret",
+      process.env.JWT_SECRET || "jesus_is_king",
       {
         expiresIn: "1h",
       },
     );
 
-    return { user, token };
+    return { user, accessToken };
   }
 }

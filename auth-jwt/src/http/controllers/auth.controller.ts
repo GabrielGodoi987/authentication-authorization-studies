@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { UserRepositoryImpl } from "../../infrastructure/repositories/user.repository";
 import type { SwaggerController } from "../../docs/types";
+import { UserRepositoryImpl } from "../../infrastructure/repositories/user.repository";
 import { AuthUseCase } from "../../services/auth.use-cases";
 
 const userRepo = new UserRepositoryImpl();
@@ -71,10 +71,10 @@ export class AuthController {
   public static async login(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password } = req.body;
-      const { user, token } = await authUseCase.execute(email, password);
+      const { user, accessToken } = await authUseCase.execute(email, password);
       res.status(200).json({
-        use: user.toJSON(),
-        token,
+        user: user.toJSON(),
+        accessToken,
       });
     } catch (error: any) {
       console.error(error.message);

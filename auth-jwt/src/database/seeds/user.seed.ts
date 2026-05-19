@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import { DataSource } from "typeorm";
 import { UserPersistenceEntity } from "../../infrastructure/persistence/user-persistence.entity";
 
@@ -13,13 +14,13 @@ export async function seedUsers(ds: DataSource): Promise<void> {
   const gabriel = new UserPersistenceEntity();
   gabriel.name = "Gabriel Godoi";
   gabriel.email = "gabrielGodoi@email.com";
-  gabriel.password = "Gabriel1";
+  gabriel.password = bcrypt.hashSync("Gabriel1", 10);
 
   const users = Array.from({ length: 10 }).map((_, i) => {
     const entity = new UserPersistenceEntity();
     entity.name = `User ${i + 1}`;
     entity.email = `user${i + 1}@example.com`;
-    entity.password = `Password${i + 1}1`;
+    entity.password = bcrypt.hashSync(`Password$123`, 10);
     return entity;
   });
 
