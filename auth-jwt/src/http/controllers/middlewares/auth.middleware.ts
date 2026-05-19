@@ -2,10 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
 export class AuthMiddleware {
-  private readonly protectedRoutes: string[] = ["/users"];
-
   public async verifyToken(req: Request, res: Response, next: NextFunction) {
-    const isProtectedRoute = this.protectedRoutes.some((route) =>
+    const protectedRoutes: string[] = ["/users"];
+    const isProtectedRoute = protectedRoutes.some((route) =>
       req.url.startsWith(route),
     );
 
@@ -13,7 +12,7 @@ export class AuthMiddleware {
       return next();
     }
 
-    const authHeader = req.headers["Authorization"]?.replace("Bearer ", "");
+    const authHeader = req.headers["authorization"]?.replace("Bearer ", "");
 
     if (!authHeader) {
       return res
