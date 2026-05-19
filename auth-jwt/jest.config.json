@@ -1,0 +1,21 @@
+{
+  "projects": [
+    {
+      "displayName": "unit",
+      "testMatch": [
+        "<rootDir>/src/**/*.spec.ts",
+        "<rootDir>/test/unit/**/*.spec.ts"
+      ],
+      "transform": {
+        "^.+\\.ts$": "ts-jest"
+      }
+    },
+    {
+      "displayName": "e2e",
+      "testMatch": ["<rootDir>/test/e2e/**/*.e2e.spec.ts"],
+      "transform": {
+        "^.+\\.ts$": "ts-jest"
+      }
+    }
+  ]
+}

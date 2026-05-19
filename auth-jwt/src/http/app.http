@@ -1,0 +1,11 @@
+@baseurl = http://localhost:3000
+
+### Create a new user
+# @name CreateUserAction
+POST @baseurl/users
+Content-Type: application/json
+{
+  "name": "John Doe",
+  "email": "johndoe@email.com",
+  "password": "123456",
+}
