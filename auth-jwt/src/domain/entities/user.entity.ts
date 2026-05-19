@@ -1,55 +1,60 @@
 import bcrypt from "bcrypt";
-import {
-  BeforeInsert,
-  BeforeUpdate,
-  Column,
-  Entity,
-  PrimaryGeneratedColumn,
-} from "typeorm";
+import { v4 } from "uuid";
 import { EmailValueObject } from "../value-objects/email.value-objects";
 import { PasswordValueObject } from "../value-objects/password.value-objects";
 
-@Entity("users")
 export class UserEntity {
-  @PrimaryGeneratedColumn("uuid")
-  id: string;
+  private id: string;
+  private name: string;
+  private email: EmailValueObject;
+  private password: string;
 
-  @Column()
-  name: string;
+  private constructor(
+    id: string,
+    name: string,
+    email: string,
+    password: string,
+  ) {
+    this.id = id;
+    this.name = name;
+    this.email = new EmailValueObject(email);
+    this.password = password;
+  }
 
-  @Column({
-    type: "varchar",
-    transformer: {
-      from: (email: string) => new EmailValueObject(email),
-      to: (email: EmailValueObject) => email.getEmail(),
-    },
-  })
-  email: EmailValueObject;
+  static create(name: string, email: string, password: string): UserEntity {
+    const validated = new PasswordValueObject(password);
+    return new UserEntity(v4(), name, email, validated.getPassword());
+  }
 
-  @Column({
-    type: "varchar",
-    transformer: {
-      from: (password: string) => new PasswordValueObject(password),
-      to: (password: PasswordValueObject) => password.getPassword(),
-    },
-  })
-  password: PasswordValueObject;
+  static fromPersistence(
+    id: string,
+    name: string,
+    email: string,
+    password: string,
+  ): UserEntity {
+    return new UserEntity(id, name, email, password);
+  }
 
-  @BeforeInsert()
-  @BeforeUpdate()
-  async hashPassword() {
-    if (this.password) {
-      this.password = new PasswordValueObject(
-        await bcrypt.hash(this.password.getPassword(), 10),
-      );
-    }
+  getId(): string {
+    return this.id;
+  }
+
+  getName(): string {
+    return this.name;
+  }
+
+  getEmail(): string {
+    return this.email.getEmail();
+  }
+
+  getPassword(): string {
+    return this.password;
   }
 
   comparePassword(plainPassword: string): boolean {
-    return bcrypt.compareSync(plainPassword, this.password.getPassword());
+    return bcrypt.compareSync(plainPassword, this.password);
   }
 
-  // return the user without the password
   toJSON() {
     return {
       id: this.id,
