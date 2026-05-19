@@ -20,7 +20,12 @@ export class CreateUserUseCase {
     if (existing) {
       throw new Error("User already exists");
     }
-    return this.userRepo.save(data);
+    const entity = UserEntity.create(data.name, data.email, data.password);
+    return this.userRepo.save({
+      name: entity.getName(),
+      email: entity.getEmail(),
+      password: entity.getPassword(),
+    });
   }
 }
 

@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { UserRepository } from "../domain/repositorie/user.repository";
 import { FindUserByEmailSpec } from "../domain/specifications/user.specifications";
@@ -9,7 +10,7 @@ export class AuthUseCase {
       new FindUserByEmailSpec(email),
     );
 
-    if (!user || !user.comparePassword(password)) {
+    if (!user || !bcrypt.compareSync(password, user.getPassword())) {
       throw new Error("Invalid credentials");
     }
 

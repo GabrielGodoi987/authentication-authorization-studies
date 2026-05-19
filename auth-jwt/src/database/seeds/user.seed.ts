@@ -10,13 +10,23 @@ export async function seedUsers(ds: DataSource): Promise<void> {
     return;
   }
 
-  const user = new UserPersistenceEntity();
-  user.name = "Gabriel Godoi";
-  user.email = "gabrielGodoi@email.com";
-  user.password = "123@123";
+  const gabriel = new UserPersistenceEntity();
+  gabriel.name = "Gabriel Godoi";
+  gabriel.email = "gabrielGodoi@email.com";
+  gabriel.password = "Gabriel1";
 
-  const saved = await repo.save(user);
-  console.log(`Seeded users.`);
+  const users = Array.from({ length: 10 }).map((_, i) => {
+    const entity = new UserPersistenceEntity();
+    entity.name = `User ${i + 1}`;
+    entity.email = `user${i + 1}@example.com`;
+    entity.password = `Password${i + 1}1`;
+    return entity;
+  });
+
+  users.push(gabriel);
+
+  const saved = await repo.save(users);
+  console.log(`Seeded ${saved.length} users.`);
 }
 
 if (process.argv[1]?.endsWith("user.seed.ts")) {

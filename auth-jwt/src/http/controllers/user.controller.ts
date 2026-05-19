@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { UserRepositoryImpl } from "../../infrastructure/repositories/user.repository";
+import type { SwaggerController } from "../../docs/types";
 import {
   CreateUserUseCase,
   DeleteUserUseCase,
@@ -18,7 +19,182 @@ const findAllUsersUseCase = new FindAllUsersUseCase(userRepo);
 const updateUserUseCase = new UpdateUserUseCase(userRepo);
 const deleteUserUseCase = new DeleteUserUseCase(userRepo);
 
+const UserResponseSchema = {
+  type: "object",
+  properties: {
+    id: { type: "string", format: "uuid" },
+    name: { type: "string" },
+    email: { type: "string", format: "email" },
+  },
+};
+
+const ErrorResponseSchema = {
+  type: "object",
+  properties: {
+    message: { type: "string" },
+  },
+};
+
 export class UserController {
+  static swagger: SwaggerController = {
+    tag: { name: "Users", description: "User management endpoints" },
+    paths: {
+      "/users": {
+        post: {
+          tags: ["Users"],
+          summary: "Create a new user",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["name", "email", "password"],
+                  properties: {
+                    name: { type: "string" },
+                    email: { type: "string", format: "email" },
+                    password: { type: "string", minLength: 8 },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            "201": {
+              description: "User created",
+              content: { "application/json": { schema: UserResponseSchema } },
+            },
+            "500": {
+              description: "Internal server error",
+              content: { "application/json": { schema: ErrorResponseSchema } },
+            },
+          },
+        },
+        get: {
+          tags: ["Users"],
+          summary: "List all users",
+          responses: {
+            "200": {
+              description: "Array of users",
+              content: {
+                "application/json": {
+                  schema: { type: "array", items: UserResponseSchema },
+                },
+              },
+            },
+          },
+        },
+      },
+      "/users/search": {
+        get: {
+          tags: ["Users"],
+          summary: "Find user by email",
+          parameters: [
+            {
+              name: "email",
+              in: "query",
+              required: true,
+              schema: { type: "string", format: "email" },
+            },
+          ],
+          responses: {
+            "200": {
+              description: "User found",
+              content: { "application/json": { schema: UserResponseSchema } },
+            },
+            "400": {
+              description: "Missing email query parameter",
+              content: { "application/json": { schema: ErrorResponseSchema } },
+            },
+            "404": {
+              description: "User not found",
+              content: { "application/json": { schema: ErrorResponseSchema } },
+            },
+          },
+        },
+      },
+      "/users/{id}": {
+        get: {
+          tags: ["Users"],
+          summary: "Find user by ID",
+          parameters: [
+            {
+              name: "id",
+              in: "path",
+              required: true,
+              schema: { type: "string" },
+            },
+          ],
+          responses: {
+            "200": {
+              description: "User found",
+              content: { "application/json": { schema: UserResponseSchema } },
+            },
+            "404": {
+              description: "User not found",
+              content: { "application/json": { schema: ErrorResponseSchema } },
+            },
+          },
+        },
+        put: {
+          tags: ["Users"],
+          summary: "Update a user",
+          parameters: [
+            {
+              name: "id",
+              in: "path",
+              required: true,
+              schema: { type: "string" },
+            },
+          ],
+          requestBody: {
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    name: { type: "string" },
+                    email: { type: "string", format: "email" },
+                    password: { type: "string", minLength: 8 },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            "200": {
+              description: "User updated",
+              content: { "application/json": { schema: UserResponseSchema } },
+            },
+            "404": {
+              description: "User not found",
+              content: { "application/json": { schema: ErrorResponseSchema } },
+            },
+          },
+        },
+        delete: {
+          tags: ["Users"],
+          summary: "Delete a user",
+          parameters: [
+            {
+              name: "id",
+              in: "path",
+              required: true,
+              schema: { type: "string" },
+            },
+          ],
+          responses: {
+            "204": { description: "User deleted, no content" },
+            "404": {
+              description: "User not found",
+              content: { "application/json": { schema: ErrorResponseSchema } },
+            },
+          },
+        },
+      },
+    },
+  };
+
   static async create(req: Request, res: Response, next: NextFunction) {
     try {
       const user = await createUserUseCase.execute(req.body);

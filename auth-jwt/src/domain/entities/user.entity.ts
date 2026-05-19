@@ -1,4 +1,3 @@
-import bcrypt from "bcrypt";
 import { v4 } from "uuid";
 import { EmailValueObject } from "../value-objects/email.value-objects";
 import { PasswordValueObject } from "../value-objects/password.value-objects";
@@ -49,10 +48,6 @@ export class UserEntity {
 
   getPassword(): string {
     return this.password;
-  }
-
-  comparePassword(plainPassword: string): boolean {
-    return bcrypt.compareSync(plainPassword, this.password);
   }
 
   toJSON() {

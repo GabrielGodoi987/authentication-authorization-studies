@@ -28,6 +28,11 @@ export function resetDataSource(): void {
 
 export const AppDataSource = new Proxy({} as DataSource, {
   get(_target, prop) {
-    return Reflect.get(getDataSource(), prop);
+    const target = getDataSource();
+    const value = Reflect.get(target, prop);
+    if (typeof value === "function") {
+      return value.bind(target);
+    }
+    return value;
   },
 });

@@ -7,10 +7,10 @@
     "test": "jest --selectProjects unit",
     "test:e2e": "jest --selectProjects e2e",
     "test:all": "jest",
-    "start:dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/server.ts",
+    "start:dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/app.ts",
     "typeorm": "typeorm-ts-node-commonjs",
-    "migration:create": "npm run typeorm -- migration:create src/database/migrations/Migration",
-    "migration:generate": "npm run typeorm -- migration:generate src/database/migrations/Migration -d src/database/source.ts",
+    "migration:create": "npm run typeorm -- migration:create -d src/database/source.ts",
+    "migration:generate": "npm run typeorm -- migration:generate -d src/database/source.ts",
     "migration:run": "npm run typeorm -- migration:run -d src/database/source.ts",
     "migration:revert": "npm run typeorm -- migration:revert -d src/database/source.ts",
     "schema:drop": "npm run typeorm -- schema:drop -d src/database/source.ts",
@@ -27,6 +27,8 @@
     "reflect-metadata": "^0.2.2",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "typeorm": "^0.3.30"
   },
   "devDependencies": {
