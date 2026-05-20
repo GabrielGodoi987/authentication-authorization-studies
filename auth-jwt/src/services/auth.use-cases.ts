@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { UserRepository } from "../domain/repositorie/user.repository";
 import { FindUserByEmailSpec } from "../domain/specifications/user.specifications";
+import { InvalidCredentialsExceptions } from "../http/exceptions/user.exceptions";
 
 export class AuthUseCase {
   constructor(private readonly userRepository: UserRepository) {}
@@ -10,11 +11,10 @@ export class AuthUseCase {
       new FindUserByEmailSpec(email),
     );
 
-    console.log("User id found? ");
-    console.log(user);
-
     if (!user || !bcrypt.compareSync(password, user.getPassword())) {
-      throw new Error("Invalid credentials");
+      throw new InvalidCredentialsExceptions({
+        message: "Invalid credentials",
+      });
     }
 
     // Using HS256 algorithm by default, but you can specify others if needed

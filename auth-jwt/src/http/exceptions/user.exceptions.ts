@@ -5,7 +5,7 @@ export class InvalidCredentialsExceptions extends Error {
   }
 }
 
-export class UserNotFoundExceptions extends Error {
+export class UserNotFoundException extends Error {
   constructor(params?: { message: string; options?: ErrorOptions }) {
     super(params?.message || "User not found", params?.options);
     this.name = "UserNotFoundExceptions";

@@ -1,10 +1,14 @@
 import { UserEntity } from "../domain/entities/user.entity";
+import { type UserRepository } from "../domain/repositorie/user.repository";
 import {
   FindAllUsersSpec,
   FindUserByEmailSpec,
   FindUserByIdSpec,
 } from "../domain/specifications/user.specifications";
-import { type UserRepository } from "../domain/repositorie/user.repository";
+import {
+  UserAlreadyExistsExceptions,
+  UserNotFoundException,
+} from "../http/exceptions/user.exceptions";
 
 export class CreateUserUseCase {
   constructor(private readonly userRepo: UserRepository) {}
@@ -18,7 +22,9 @@ export class CreateUserUseCase {
       new FindUserByEmailSpec(data.email),
     );
     if (existing) {
-      throw new Error("User already exists");
+      throw new UserAlreadyExistsExceptions({
+        message: "User already exists",
+      });
     }
     const entity = UserEntity.create(data.name, data.email, data.password);
     return this.userRepo.save({
@@ -33,7 +39,15 @@ export class FindUserByIdUseCase {
   constructor(private readonly userRepo: UserRepository) {}
 
   async execute(id: string): Promise<UserEntity | null> {
-    return this.userRepo.findOne(new FindUserByIdSpec(id));
+    const user = await this.userRepo.findOne(new FindUserByIdSpec(id));
+
+    if (!user) {
+      throw new UserNotFoundException({
+        message: "User was not found",
+      });
+    }
+
+    return user;
   }
 }
 
@@ -41,7 +55,14 @@ export class FindUserByEmailUseCase {
   constructor(private readonly userRepo: UserRepository) {}
 
   async execute(email: string): Promise<UserEntity | null> {
-    return this.userRepo.findOne(new FindUserByEmailSpec(email));
+    const user = await this.userRepo.findOne(new FindUserByEmailSpec(email));
+    if (!user) {
+      throw new UserNotFoundException({
+        message: "Cannot found user with email",
+      });
+    }
+
+    return user;
   }
 }
 
@@ -64,6 +85,10 @@ export class UpdateUserUseCase {
       password: string;
     }>,
   ): Promise<UserEntity | null> {
+    // procurar o user
+    // verificar se ele existe
+    // throw exception if not
+    // return user at the end of operation being executed
     return this.userRepo.update(id, data);
   }
 }
@@ -72,6 +97,7 @@ export class DeleteUserUseCase {
   constructor(private readonly userRepo: UserRepository) {}
 
   async execute(id: string): Promise<boolean> {
+    // verify if user exists
     return this.userRepo.delete(id);
   }
 }

@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import { MissingTokenException } from "../../exceptions/auth.exception";
 
 export class AuthMiddleware {
   public async verifyToken(req: Request, res: Response, next: NextFunction) {
@@ -15,9 +16,11 @@ export class AuthMiddleware {
     const authHeader = req.headers["authorization"]?.replace("Bearer ", "");
 
     if (!authHeader) {
-      return res
-        .status(401)
-        .json({ message: "Authorization header not provided" });
+      return next(
+        new MissingTokenException({
+          message: "Token wasn't provided",
+        }),
+      );
     }
 
     const token = authHeader && authHeader.split(" ")[1];
