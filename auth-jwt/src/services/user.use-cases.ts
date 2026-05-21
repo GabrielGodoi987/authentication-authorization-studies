@@ -40,7 +40,6 @@ export class FindUserByIdUseCase {
 
   async execute(id: string): Promise<UserEntity | null> {
     const user = await this.userRepo.findOne(new FindUserByIdSpec(id));
-
     if (!user) {
       throw new UserNotFoundException({
         message: "User was not found",
@@ -85,11 +84,22 @@ export class UpdateUserUseCase {
       password: string;
     }>,
   ): Promise<UserEntity | null> {
-    // procurar o user
-    // verificar se ele existe
-    // throw exception if not
-    // return user at the end of operation being executed
-    return this.userRepo.update(id, data);
+    try {
+      await this.verifyIfUserExists(id);
+      return this.userRepo.update(id, data);
+    } catch (error: any) {
+      console.error(error);
+      return error.message;
+    }
+  }
+
+  private async verifyIfUserExists(id: string) {
+    const user = await this.userRepo.findOne(new FindUserByIdSpec(id));
+    if (!user) {
+      throw new UserNotFoundException({
+        message: "User was not found",
+      });
+    }
   }
 }
 
@@ -97,7 +107,16 @@ export class DeleteUserUseCase {
   constructor(private readonly userRepo: UserRepository) {}
 
   async execute(id: string): Promise<boolean> {
-    // verify if user exists
+    await this.verifyIfUserExists(id);
     return this.userRepo.delete(id);
+  }
+
+  private async verifyIfUserExists(id: string) {
+    const user = await this.userRepo.findOne(new FindUserByIdSpec(id));
+    if (!user) {
+      throw new UserNotFoundException({
+        message: "User was not found",
+      });
+    }
   }
 }
