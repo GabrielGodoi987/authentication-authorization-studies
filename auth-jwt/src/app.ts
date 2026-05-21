@@ -1,12 +1,19 @@
+import { config } from "dotenv";
 import express from "express";
 import "reflect-metadata";
 import { buildSwaggerSpec, swaggerUi } from "./docs/swagger";
 import { AuthController } from "./http/controllers/auth.controller";
 import { AuthMiddleware } from "./http/controllers/middlewares/auth.middleware";
 import { UserController } from "./http/controllers/user.controller";
+import { processEnv } from "./lib/consts";
 import { authRouter } from "./router/auth-router";
 import { userRouter } from "./router/user-router";
 import { main } from "./webserver/server";
+
+config({
+  debug: true,
+  processEnv: processEnv,
+});
 
 export const app = express();
 
