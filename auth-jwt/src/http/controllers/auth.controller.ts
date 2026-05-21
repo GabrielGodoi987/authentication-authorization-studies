@@ -1,10 +1,30 @@
 import { NextFunction, Request, Response } from "express";
 import type { SwaggerController } from "../../docs/types";
+import { EmailValueObject } from "../../domain/value-objects/email.value-objects";
+import { PasswordValueObject } from "../../domain/value-objects/password.value-objects";
 import { UserRepositoryImpl } from "../../infrastructure/repositories/user.repository";
-import { AuthUseCase } from "../../services/auth.use-cases";
+import { AuthUseCase, RefreshTokenUseCase } from "../../services/auth.use-cases";
+import { InvalidTokenException, MissingTokenException } from "../exceptions/auth.exception";
 
 const userRepo = new UserRepositoryImpl();
 const authUseCase = new AuthUseCase(userRepo);
+const refreshTokenUseCase = new RefreshTokenUseCase(userRepo);
+
+interface AuthRequestBody extends Request {
+  body: {
+    email: EmailValueObject,
+    password: PasswordValueObject
+  }
+}
+
+interface RefreshRequest extends Request {
+  body: {
+    refreshToken?: string,
+  },
+  headers: {
+    authorization?: string,
+  },
+}
 
 export class AuthController {
   static swagger: SwaggerController = {
@@ -65,13 +85,38 @@ export class AuthController {
           },
         },
       },
+      "/auth/refresh-token": {
+        post: {
+          tags: ["Auth"],
+          summary: "Refresh a expired JWT token",
+          requestBoy: {
+            requited: true,
+             content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["token",],
+                  properties: {
+                    token: { type: "string", },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            "200": {},
+            "401": {},
+            "404": {},
+          }
+       } 
+      }
     },
   };
 
-  public static async login(req: Request, res: Response, next: NextFunction) {
+  public static async login(req: AuthRequestBody, res: Response, next: NextFunction) {
     try {
-      const { email, password } = req.body;
-      const { user, accessToken } = await authUseCase.execute(email, password);
+      const { email, password} = req.body;
+      const { user, accessToken } = await authUseCase.execute(email.getEmail(), password.getPassword());
       res.status(200).json({
         user: user.toJSON(),
         accessToken,
@@ -79,6 +124,41 @@ export class AuthController {
     } catch (error: any) {
       console.error(error.message);
       next(error);
+    }
+  }
+
+  public static async refresh(req: RefreshRequest, res: Response, next: NextFunction) {
+    try {
+      const refreshToken = req.body?.refreshToken || req.headers.authorization?.replace("Bearer ", "");
+      if (!refreshToken) {
+        next(new MissingTokenException({
+          message: "Token is missing",
+          options: {
+            cause: "Refresh token was not send"
+          }
+        }));
+        return;
+       }
+      
+      const { newAccessToken, newRefreshToken} = await refreshTokenUseCase.refreshToken({ refreshToken });
+      
+      res.status(200).json({
+        newAccessToken,
+        newRefreshToken,
+      })
+      
+    } catch (error: any) {
+      res.status(error.status).json({
+        message: error.message
+      });
+
+      next(new InvalidTokenException({
+        message: error.message,
+        options: {
+          cause: error
+        }
+      }));
+      return;
     }
   }
 }

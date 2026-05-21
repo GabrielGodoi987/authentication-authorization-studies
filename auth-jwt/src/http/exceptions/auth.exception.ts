@@ -11,3 +11,11 @@ export class MissingTokenException extends Error {
     this.name = "MissingTokenException";
   }
 }
+
+
+export class InvalidRefreshTokenException extends Error{
+    constructor(params?: { message: string; options?: ErrorOptions }) {
+    super(params?.message || "Invalid refresh token", params?.options);
+    this.name = "InvalidRefreshTokenException";
+  }
+}

@@ -1,5 +1,5 @@
 import { config } from "dotenv";
-import express from "express";
+import express, { Request, Response } from "express";
 import "reflect-metadata";
 import { buildSwaggerSpec, swaggerUi } from "./docs/swagger";
 import { AuthController } from "./http/controllers/auth.controller";
@@ -26,8 +26,8 @@ app.use(authMiddleware.verifyToken);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(express.json());
 
-app.get("/", (_req, res) => {
-  res.json({ message: "Welcome to the Auth JWT API" });
+app.get("/", (_req: Request, res: Response) => {
+  res.status(200).json({ message: "Welcome to the Auth JWT API" });
 });
 
 app.use("/users", userRouter);
@@ -36,9 +36,8 @@ app.use("/auth", authRouter);
 app.use(
   (
     error: Error,
-    _req: express.Request,
-    res: express.Response,
-    _next: express.NextFunction,
+    _req: Request,
+    res: Response,
   ) => {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });

@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import { DataSource } from "typeorm";
 import { UserPersistenceEntity } from "../../infrastructure/persistence/user-persistence.entity";
+import { getDataSource } from "../source";
 
 export async function seedUsers(ds: DataSource): Promise<void> {
   const repo = ds.getRepository(UserPersistenceEntity);
@@ -32,7 +33,6 @@ export async function seedUsers(ds: DataSource): Promise<void> {
 
 if (process.argv[1]?.endsWith("user.seed.ts")) {
   (async () => {
-    const { getDataSource } = await import("../source");
     const ds = await getDataSource().initialize();
     await seedUsers(ds);
     await ds.destroy();
