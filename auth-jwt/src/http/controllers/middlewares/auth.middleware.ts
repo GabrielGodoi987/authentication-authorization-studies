@@ -16,11 +16,12 @@ export class AuthMiddleware {
     const authHeader = req.headers["authorization"]?.replace("Bearer ", "");
 
     if (!authHeader) {
-      return next(
+      next(
         new MissingTokenException({
           message: "Token wasn't provided",
         }),
       );
+      return;
     }
 
     const token = authHeader && authHeader.split(" ")[1];

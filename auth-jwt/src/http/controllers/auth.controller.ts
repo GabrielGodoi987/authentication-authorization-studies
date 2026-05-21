@@ -85,31 +85,85 @@ export class AuthController {
           },
         },
       },
-      "/auth/refresh-token": {
-        post: {
-          tags: ["Auth"],
-          summary: "Refresh a expired JWT token",
-          requestBoy: {
-            requited: true,
-             content: {
-              "application/json": {
-                schema: {
-                  type: "object",
-                  required: ["token",],
-                  properties: {
-                    token: { type: "string", },
+       "/auth/refresh-token": {
+    post: {
+      tags: ["Auth"],
+      summary: "Refresh an expired JWT token",
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              required: ["refreshToken"],
+              properties: {
+                refreshToken: {
+                  type: "string",
+                  example: "refresh.token.here",
+                },
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        "200": {
+          description: "Token refreshed successfully",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  token: {
+                    type: "string",
+                    example: "new.jwt.token",
+                  },
+                  refreshToken: {
+                    type: "string",
+                    example: "new.refresh.token",
                   },
                 },
               },
             },
           },
-          responses: {
-            "200": {},
-            "401": {},
-            "404": {},
-          }
-       } 
-      }
+        },
+
+        "401": {
+          description: "Invalid or expired refresh token",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  message: {
+                    type: "string",
+                    example: "Invalid refresh token",
+                  },
+                },
+              },
+            },
+          },
+        },
+
+        "404": {
+          description: "User not found",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  message: {
+                    type: "string",
+                    example: "User not found",
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
     },
   };
 
