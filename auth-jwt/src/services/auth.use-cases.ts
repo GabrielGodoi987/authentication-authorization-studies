@@ -3,30 +3,42 @@ import jwt from "jsonwebtoken";
 import { UserEntity } from "../domain/entities/user.entity";
 import { UserRepository } from "../domain/repositorie/user.repository";
 import { FindUserByEmailSpec } from "../domain/specifications/user.specifications";
-import { InvalidRefreshTokenException, InvalidTokenException } from "../http/exceptions/auth.exception";
+import {
+  InvalidRefreshTokenException,
+  InvalidTokenException,
+} from "../http/exceptions/auth.exception";
 import {
   InvalidCredentialsExceptions,
+  TokenGenerationException,
   UserNotFoundException,
 } from "../http/exceptions/user.exceptions";
 import { processEnv } from "../lib/consts";
 
-export class TokenProvider{
-
+export class TokenProvider {
   public static generateAccessToken({
     name,
     email,
   }: {
     name: string;
     email: string;
-  }) {
-    const accessToken = jwt.sign(
-      { userName: name, userEmail: email },
-      processEnv.JWTACCESSTOKENEXPIRESIN || "jesus_is_king",
-      {
-        expiresIn: "1h",
-        algorithm: "HS256",
-      },
-    );
+  }): string {
+    try {
+      return jwt.sign(
+        { userName: name, userEmail: email },
+        processEnv.JWTACCESSTOKENEXPIRESIN as string,
+        {
+          expiresIn: "1h",
+          algorithm: "HS256",
+        },
+      );
+    } catch (error: any) {
+      throw new TokenGenerationException({
+        message: error.message,
+        options: {
+          cause: error,
+        },
+      });
+    }
   }
 
   public static generateRefreshToken({
@@ -35,15 +47,24 @@ export class TokenProvider{
   }: {
     name: string;
     email: string;
-  }) {
-    const accessToken = jwt.sign(
-      { userName: name, userEmail: email },
-      processEnv.JWTREFRESHTOKENEXPIRESIN || "jesus_is_king",
-      {
-        expiresIn: "1h",
-        algorithm: "HS256",
-      },
-    );
+  }): string {
+    try {
+      return jwt.sign(
+        { userName: name, userEmail: email },
+        processEnv.JWTREFRESHTOKENEXPIRESIN as string,
+        {
+          expiresIn: "1h",
+          algorithm: "HS256",
+        },
+      );
+    } catch (error: any) {
+      throw new TokenGenerationException({
+        message: error.message,
+        options: {
+          cause: error,
+        },
+      });
+    }
   }
 }
 
@@ -89,7 +110,7 @@ export class AuthUseCase {
 export class RefreshTokenUseCase {
   constructor(private readonly userRepository: UserRepository) {}
 
-  public async refreshToken({ refreshToken }:{refreshToken: string}) {
+  public async refreshToken({ refreshToken }: { refreshToken: string }) {
     const { payload } = this.verifyAndValidateRefreshToken(refreshToken);
     const user = await this.verifyIfUserExists(payload.email);
 
@@ -105,46 +126,46 @@ export class RefreshTokenUseCase {
 
     return {
       newAccessToken,
-      newRefreshToken
-    }
+      newRefreshToken,
+    };
   }
 
   private verifyAndValidateRefreshToken(token: string) {
-   try {
-     const payload = jwt.sign(
-      token,
-      processEnv.JWTREFRESHTOKENEXPIRESIN as string,
-    ) as unknown as {
-      name: string;
-      email: string;
-      iat: number;
-    };
+    try {
+      const payload = jwt.sign(
+        token,
+        processEnv.JWTREFRESHTOKENEXPIRESIN as string,
+      ) as unknown as {
+        name: string;
+        email: string;
+        iat: number;
+      };
 
-     if (!payload) {
+      if (!payload) {
+        throw new InvalidRefreshTokenException({
+          message: "RefreshToken was invalid",
+          options: {
+            cause: payload,
+          },
+        });
+      }
+
+      return { payload };
+    } catch (error: any) {
       throw new InvalidRefreshTokenException({
-        message: "RefreshToken was invalid",
+        message: error.message,
         options: {
-          cause: payload,
-        }
+          cause: error,
+        },
       });
-     }
-
-     return { payload };
-   } catch (error: any) {
-     throw new InvalidRefreshTokenException({
-       message: error.message,
-       options: {
-         cause: error
-       }
-    })
-   }
+    }
   }
 
   private async verifyIfUserExists(email: string): Promise<UserEntity> {
     const user = await this.userRepository.findOne(
       new FindUserByEmailSpec(email),
     );
-    
+
     if (!user) {
       throw new UserNotFoundException({
         message: "User was not found",

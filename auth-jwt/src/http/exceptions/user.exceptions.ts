@@ -18,3 +18,10 @@ export class UserAlreadyExistsExceptions extends Error {
     this.name = "UserAlreadyExistsExceptions";
   }
 }
+
+export class TokenGenerationException extends Error {
+  constructor(params?: { message: string; options?: ErrorOptions }) {
+    super(params?.message || "Error when generating token", params?.options);
+    this.name = "TokenGenerationException";
+  }
+}

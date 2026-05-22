@@ -1,6 +1,4 @@
-import { v4 } from "uuid";
 import { EmailValueObject } from "../value-objects/email.value-objects";
-import { PasswordValueObject } from "../value-objects/password.value-objects";
 
 export class UserEntity {
   private id: string;
@@ -8,21 +6,11 @@ export class UserEntity {
   private email: EmailValueObject;
   private password: string;
 
-  private constructor(
-    id: string,
-    name: string,
-    email: string,
-    password: string,
-  ) {
+  constructor(id: string, name: string, email: string, password: string) {
     this.id = id;
     this.name = name;
     this.email = new EmailValueObject(email);
     this.password = password;
-  }
-
-  static create(name: string, email: string, password: string): UserEntity {
-    const validated = new PasswordValueObject(password);
-    return new UserEntity(v4(), name, email, validated.getPassword());
   }
 
   static fromPersistence(

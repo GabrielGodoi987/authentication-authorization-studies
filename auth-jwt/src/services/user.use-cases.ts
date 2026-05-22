@@ -1,3 +1,4 @@
+import { v4 } from "uuid";
 import { UserEntity } from "../domain/entities/user.entity";
 import { type UserRepository } from "../domain/repositorie/user.repository";
 import {
@@ -21,12 +22,15 @@ export class CreateUserUseCase {
     const existing = await this.userRepo.findOne(
       new FindUserByEmailSpec(data.email),
     );
+
     if (existing) {
       throw new UserAlreadyExistsExceptions({
         message: "User already exists",
       });
     }
-    const entity = UserEntity.create(data.name, data.email, data.password);
+
+    const entity = new UserEntity(v4(), data.name, data.email, data.password);
+
     return this.userRepo.save({
       name: entity.getName(),
       email: entity.getEmail(),
