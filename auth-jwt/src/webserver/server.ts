@@ -4,6 +4,8 @@ import { AppDataSource } from "../database/source";
 
 const PORT = process.env.PORT || 3000;
 export async function main(): Promise<void> {
+  console.log("Application started here!!");
+  console.log(process.env.JWT_SECRET);
   const ds = await AppDataSource.initialize();
   await seedUsers(ds);
   app.listen(PORT, () => {

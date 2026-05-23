@@ -25,9 +25,9 @@ export class TokenProvider {
     try {
       return jwt.sign(
         { userName: name, userEmail: email },
-        processEnv.JWTACCESSTOKENEXPIRESIN as string,
+        processEnv.JWT_SECRET as string,
         {
-          expiresIn: "1h",
+          expiresIn: "5m",
           algorithm: "HS256",
         },
       );
@@ -51,9 +51,9 @@ export class TokenProvider {
     try {
       return jwt.sign(
         { userName: name, userEmail: email },
-        processEnv.JWTREFRESHTOKENEXPIRESIN as string,
+        processEnv.JWT_SECRET as string,
         {
-          expiresIn: "1h",
+          expiresIn: "10H",
           algorithm: "HS256",
         },
       );
@@ -97,6 +97,7 @@ export class AuthUseCase {
 
       return { user, accessToken, refreshToken };
     } catch (error: any) {
+      console.log(error);
       throw new InvalidTokenException({
         message: error.message,
         options: {
@@ -134,7 +135,7 @@ export class RefreshTokenUseCase {
     try {
       const payload = jwt.sign(
         token,
-        processEnv.JWTREFRESHTOKENEXPIRESIN as string,
+        processEnv.JWT_SECRET as string,
       ) as unknown as {
         name: string;
         email: string;

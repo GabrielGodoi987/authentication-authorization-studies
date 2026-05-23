@@ -1,7 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import type { SwaggerController } from "../../docs/types";
-import { EmailValueObject } from "../../domain/value-objects/email.value-objects";
-import { PasswordValueObject } from "../../domain/value-objects/password.value-objects";
 import { UserRepositoryImpl } from "../../infrastructure/repositories/user.repository";
 import {
   AuthUseCase,
@@ -15,22 +13,6 @@ import {
 const userRepo = new UserRepositoryImpl();
 const authUseCase = new AuthUseCase(userRepo);
 const refreshTokenUseCase = new RefreshTokenUseCase(userRepo);
-
-interface AuthRequestBody extends Request {
-  body: {
-    email: EmailValueObject;
-    password: PasswordValueObject;
-  };
-}
-
-interface RefreshRequest extends Request {
-  body: {
-    refreshToken?: string;
-  };
-  headers: {
-    authorization?: string;
-  };
-}
 
 export class AuthController {
   static swagger: SwaggerController = {
@@ -177,10 +159,14 @@ export class AuthController {
     try {
       const { email, password } = req.body;
 
-      const { user, accessToken } = await authUseCase.execute(email, password);
+      const { user, accessToken, refreshToken } = await authUseCase.execute(
+        email,
+        password,
+      );
       res.status(200).json({
         user: user.toJSON(),
         accessToken,
+        refreshToken,
       });
     } catch (error: any) {
       console.error(error.message);
@@ -188,11 +174,7 @@ export class AuthController {
     }
   }
 
-  public static async refresh(
-    req: RefreshRequest,
-    res: Response,
-    next: NextFunction,
-  ) {
+  public static async refresh(req: Request, res: Response, next: NextFunction) {
     try {
       const refreshToken =
         req.body?.refreshToken ||
@@ -217,10 +199,6 @@ export class AuthController {
         newRefreshToken,
       });
     } catch (error: any) {
-      res.status(error.status).json({
-        message: error.message,
-      });
-
       next(
         new InvalidTokenException({
           message: error.message,
