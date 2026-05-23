@@ -22,6 +22,7 @@ export class AuthController {
         post: {
           tags: ["Auth"],
           summary: "Authenticate a user and return a JWT token",
+          security: [],
           requestBody: {
             required: true,
             content: {
@@ -77,6 +78,7 @@ export class AuthController {
         post: {
           tags: ["Auth"],
           summary: "Refresh an expired JWT token",
+          security: [],
           requestBody: {
             required: true,
             content: {

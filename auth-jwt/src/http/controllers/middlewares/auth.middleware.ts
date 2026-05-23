@@ -1,6 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
-import { MissingTokenException } from "../../exceptions/auth.exception";
+import jwt, { TokenExpiredError } from "jsonwebtoken";
+import { processEnv } from "../../../lib/consts";
+import {
+  ExpiredTokenException,
+  MissingTokenException,
+} from "../../exceptions/auth.exception";
 
 export class AuthMiddleware {
   public async verifyToken(req: Request, res: Response, next: NextFunction) {
@@ -31,12 +35,28 @@ export class AuthMiddleware {
     }
 
     try {
-      const payload = jwt.verify(token, "jesus_is_king");
+      const payload = jwt.verify(token, processEnv.JWT_SECRET) as {
+        sub: string;
+        userName: string;
+        userEmail: string;
+        iat: number;
+        exp: number;
+      };
+
       console.log(payload);
 
       next();
     } catch (err: any) {
-      console.error("Token verification failed:", err.message);
+      if (err instanceof TokenExpiredError) {
+        return next(
+          new ExpiredTokenException({
+            message: "Token has expired",
+            options: {
+              cause: err,
+            },
+          }),
+        );
+      }
       return res.status(403).json({ message: "Invalid token" });
     }
   }

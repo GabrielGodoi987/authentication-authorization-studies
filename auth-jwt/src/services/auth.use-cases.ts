@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import jwt, { SignOptions } from "jsonwebtoken";
 import { UserEntity } from "../domain/entities/user.entity";
 import { UserRepository } from "../domain/repositorie/user.repository";
 import { FindUserByEmailSpec } from "../domain/specifications/user.specifications";
@@ -16,20 +16,26 @@ import { processEnv } from "../lib/consts";
 
 export class TokenProvider {
   public static generateAccessToken({
+    id,
     name,
     email,
   }: {
+    id: string;
     name: string;
     email: string;
   }): string {
     try {
+      const signOptions: SignOptions = {
+        expiresIn:
+          processEnv.JWTACCESSTOKENEXPIRESIN as SignOptions["expiresIn"],
+        algorithm: "HS256",
+        subject: id,
+      };
+
       return jwt.sign(
         { userName: name, userEmail: email },
-        processEnv.JWT_SECRET as string,
-        {
-          expiresIn: "5m",
-          algorithm: "HS256",
-        },
+        processEnv.JWT_SECRET,
+        signOptions,
       );
     } catch (error: any) {
       throw new TokenGenerationException({
@@ -42,20 +48,25 @@ export class TokenProvider {
   }
 
   public static generateRefreshToken({
+    id,
     name,
     email,
   }: {
+    id: string;
     name: string;
     email: string;
   }): string {
     try {
+      const signOptions: SignOptions = {
+        expiresIn:
+          processEnv.JWTREFRESHTOKENEXPIRESIN as SignOptions["expiresIn"],
+        algorithm: "HS256",
+        subject: id,
+      };
       return jwt.sign(
         { userName: name, userEmail: email },
-        processEnv.JWT_SECRET as string,
-        {
-          expiresIn: "10H",
-          algorithm: "HS256",
-        },
+        processEnv.JWT_SECRET,
+        signOptions,
       );
     } catch (error: any) {
       throw new TokenGenerationException({
@@ -86,11 +97,13 @@ export class AuthUseCase {
       }
 
       const accessToken = TokenProvider.generateAccessToken({
+        id: user.getId(),
         name: user.getName(),
         email: user.getEmail(),
       });
 
       const refreshToken = TokenProvider.generateRefreshToken({
+        id: user.getId(),
         name: user.getName(),
         email: user.getEmail(),
       });
@@ -113,14 +126,16 @@ export class RefreshTokenUseCase {
 
   public async refreshToken({ refreshToken }: { refreshToken: string }) {
     const { payload } = this.verifyAndValidateRefreshToken(refreshToken);
-    const user = await this.verifyIfUserExists(payload.email);
+    const user = await this.verifyIfUserExists(payload.userEmail);
 
     const newAccessToken = TokenProvider.generateAccessToken({
+      id: user.getId(),
       name: user.getName(),
       email: user.getEmail(),
     });
 
     const newRefreshToken = TokenProvider.generateRefreshToken({
+      id: user.getId(),
       name: user.getName(),
       email: user.getEmail(),
     });
@@ -133,12 +148,10 @@ export class RefreshTokenUseCase {
 
   private verifyAndValidateRefreshToken(token: string) {
     try {
-      const payload = jwt.sign(
-        token,
-        processEnv.JWT_SECRET as string,
-      ) as unknown as {
-        name: string;
-        email: string;
+      const payload = jwt.verify(token, processEnv.JWT_SECRET) as {
+        userName: string;
+        userEmail: string;
+        sub: string;
         iat: number;
       };
 

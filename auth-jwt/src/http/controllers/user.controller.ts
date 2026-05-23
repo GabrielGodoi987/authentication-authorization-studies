@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { UserRepositoryImpl } from "../../infrastructure/repositories/user.repository";
 import type { SwaggerController } from "../../docs/types";
+import { UserRepositoryImpl } from "../../infrastructure/repositories/user.repository";
 import {
   CreateUserUseCase,
   DeleteUserUseCase,
@@ -43,6 +43,7 @@ export class UserController {
         post: {
           tags: ["Users"],
           summary: "Create a new user",
+          security: [],
           requestBody: {
             required: true,
             content: {
@@ -73,6 +74,7 @@ export class UserController {
         get: {
           tags: ["Users"],
           summary: "List all users",
+          security: [{ bearerAuth: [] }],
           responses: {
             "200": {
               description: "Array of users",
@@ -89,6 +91,7 @@ export class UserController {
         get: {
           tags: ["Users"],
           summary: "Find user by email",
+          security: [{ bearerAuth: [] }],
           parameters: [
             {
               name: "email",
@@ -117,6 +120,7 @@ export class UserController {
         get: {
           tags: ["Users"],
           summary: "Find user by ID",
+          security: [{ bearerAuth: [] }],
           parameters: [
             {
               name: "id",
@@ -139,6 +143,7 @@ export class UserController {
         put: {
           tags: ["Users"],
           summary: "Update a user",
+          security: [{ bearerAuth: [] }],
           parameters: [
             {
               name: "id",
@@ -175,6 +180,7 @@ export class UserController {
         delete: {
           tags: ["Users"],
           summary: "Delete a user",
+          security: [{ bearerAuth: [] }],
           parameters: [
             {
               name: "id",
@@ -246,7 +252,10 @@ export class UserController {
 
   static async update(req: Request, res: Response, next: NextFunction) {
     try {
-      const user = await updateUserUseCase.execute(req.params.id as string, req.body);
+      const user = await updateUserUseCase.execute(
+        req.params.id as string,
+        req.body,
+      );
       if (!user) {
         res.status(404).json({ message: "User not found" });
         return;

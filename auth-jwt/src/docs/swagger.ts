@@ -20,7 +20,20 @@ export function buildSwaggerSpec({ controllers, schemas }: SwaggerSpecOptions) {
     paths,
     components: {
       schemas: schemas ?? {},
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+          description: "JWT token obtained from login endpoint",
+        },
+      },
     },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
   };
 }
 
