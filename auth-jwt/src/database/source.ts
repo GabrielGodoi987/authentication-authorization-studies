@@ -1,4 +1,6 @@
 import { DataSource } from "typeorm";
+import { CartProductPersistenceEntity } from "../infrastructure/persistence/cart-product-persistence.entity";
+import { CartPersistenceEntity } from "../infrastructure/persistence/cart-persistence.entity";
 import { UserPersistenceEntity } from "../infrastructure/persistence/user-persistence.entity";
 
 let dataSource: DataSource | null = null;
@@ -12,7 +14,8 @@ export function getDataSource(): DataSource {
     dataSource = new DataSource({
       type: "sqlite",
       database: getDbPath(),
-      entities: [UserPersistenceEntity],
+      synchronize: true,
+      entities: [UserPersistenceEntity, CartPersistenceEntity, CartProductPersistenceEntity],
       migrations: [`${__dirname}/migrations/*.{ts,js}`],
     });
   }

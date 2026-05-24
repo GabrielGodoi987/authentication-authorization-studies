@@ -165,6 +165,7 @@ export class AuthController {
         email,
         password,
       );
+      
       res.status(200).json({
         user: user.toJSON(),
         accessToken,

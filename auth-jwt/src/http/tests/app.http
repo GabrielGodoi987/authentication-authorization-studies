@@ -1,11 +1,11 @@
 @baseurl = http://localhost:3000
-@token-jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6IkdhYnJpZWwgR29kb2kiLCJ1c2VyRW1haWwiOiJnYWJyaWVsR29kb2lAZW1haWwuY29tIiwiaWF0IjoxNzc5MjE4MzU0LCJleHAiOjE3NzkyMjE5NTR9.nvXKBUYv-BmhooupBbEeY2Z3Cg6B1V4RajR0UGeK6gg
+@token-jwt = "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1balJdrbmorlCoYp0MTQ8QM3zH47xtkQnlfD2kjEZcMVAmpGfr7x2mb6lBJ3qe1OUOWA7iB5XTxandKWhDfh+szEJZvJmPj1vZ4d1K7Z5LmbSZujOZ6Avv8ZarHML1zKsibgqwGPCeJ6Pd4rrdgJKkHqWW9hYD/XAAnGJ241HQQIxCL0YEkc0Q2Iemu0fTK4epLUoXJdrGzLEgUmKTpfVS2cCSqCwMczUSvk35VWbLejLSHBKTakFupk/BKlmC+frzIrDPvnwaElHOhySX/LMk4csBceMuQj2Y99Lc1Vhal04AJcZiOGzkcK4emv9EmpS67mXTArQ6cX7s86yxjKgwIDAQAB\n-----END PUBLIC KEY-----"
 
 ### Create a new user
 # @name CreateUserAction
 POST {{baseurl}}/users
 Content-Type: application/json
-Authorization: Bearer token-jwt
+Authorization: Bearer {{token-jwt}}
 
 {
   "name": "John Doe",
@@ -15,22 +15,24 @@ Authorization: Bearer token-jwt
 
 ### List all users
 # @name FindAllUsersAction
-Authorization: Bearer token-jwt
 GET {{baseurl}}/users
+Authorization: Bearer {{token-jwt}}
 
 ### Find user by ID
 # @name FindUserByIdAction
 GET {{baseurl}}/users/{{CreateUserAction.response.body.id}}
+Authorization: Bearer {{token-jwt}}
 
 ### Find user by email
 # @name FindUserByEmailAction
 GET {{baseurl}}/users/search?email={{CreateUserAction.response.body.email}}
+Authorization: Bearer {{token-jwt}}
 
 ### Update created user
 # @name UpdateUserAction
 PUT {{baseurl}}/users/{{CreateUserAction.response.body.id}}
 Content-Type: application/json
-
+Authorization: Bearer {{token-jwt}}
 {
   "name": "John Doe Updated",
   "email": "johndoe@email.com"
@@ -39,3 +41,4 @@ Content-Type: application/json
 ### Delete created user
 # @name DeleteUserAction
 DELETE {{baseurl}}/users/{{CreateUserAction.response.body.id}}
+Authorization: Bearer {{token-jwt}}

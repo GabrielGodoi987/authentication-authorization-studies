@@ -27,14 +27,14 @@ export class TokenProvider {
     try {
       const signOptions: SignOptions = {
         expiresIn:
-          processEnv.JWTACCESSTOKENEXPIRESIN as SignOptions["expiresIn"],
-        algorithm: "HS256",
+          processEnv.JWT_ACCESS_TOKEN_EXPIRESIN as SignOptions["expiresIn"],
+        algorithm: "RS256",
         subject: id,
       };
 
       return jwt.sign(
         { userName: name, userEmail: email },
-        processEnv.JWT_SECRET,
+        processEnv.JWT_PRIVATE_KEY,
         signOptions,
       );
     } catch (error: any) {
@@ -57,15 +57,19 @@ export class TokenProvider {
     email: string;
   }): string {
     try {
+      console.log('Chegou aqui');
+      console.log(processEnv.JWT_REFRESH_TOKEN_EXPIRESIN);
+
       const signOptions: SignOptions = {
         expiresIn:
-          processEnv.JWTREFRESHTOKENEXPIRESIN as SignOptions["expiresIn"],
-        algorithm: "HS256",
+          processEnv.JWT_REFRESH_TOKEN_EXPIRESIN as SignOptions["expiresIn"],
+        algorithm: "RS256",
         subject: id,
       };
+
       return jwt.sign(
         { userName: name, userEmail: email },
-        processEnv.JWT_SECRET,
+        processEnv.JWT_PRIVATE_KEY,
         signOptions,
       );
     } catch (error: any) {
@@ -148,7 +152,7 @@ export class RefreshTokenUseCase {
 
   private verifyAndValidateRefreshToken(token: string) {
     try {
-      const payload = jwt.verify(token, processEnv.JWT_SECRET) as {
+      const payload = jwt.verify(token, processEnv.JWT_PUBLIC_KEY) as {
         userName: string;
         userEmail: string;
         sub: string;

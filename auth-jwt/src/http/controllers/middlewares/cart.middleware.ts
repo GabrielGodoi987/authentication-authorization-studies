@@ -6,17 +6,14 @@ import {
   MissingTokenException,
 } from "../../exceptions/auth.exception";
 
-export class AuthMiddleware {
+export interface JwtPayload {
+  sub: string;
+  userName: string;
+  userEmail: string;
+}
+
+export class CartMiddleware {
   public async verifyToken(req: Request, res: Response, next: NextFunction) {
-    const protectedRoutes: string[] = ["/users"];
-    const isProtectedRoute = protectedRoutes.some((route) =>
-      req.url.startsWith(route),
-    );
-
-    if (!isProtectedRoute) {
-      return next();
-    }
-
     const authHeader = req.headers["authorization"];
 
     if (!authHeader) {
@@ -37,13 +34,7 @@ export class AuthMiddleware {
     try {
       const payload = jwt.verify(token, processEnv.JWT_PUBLIC_KEY, {
         algorithms: ["RS256"],
-      }) as {
-        sub: string;
-        userName: string;
-        userEmail: string;
-        iat: number;
-        exp: number;
-      };
+      }) as JwtPayload & { iat: number; exp: number };
 
       (req as any).user = {
         id: payload.sub,
@@ -57,9 +48,7 @@ export class AuthMiddleware {
         return next(
           new ExpiredTokenException({
             message: "Token has expired",
-            options: {
-              cause: err,
-            },
+            options: { cause: err },
           }),
         );
       }

@@ -1,0 +1,105 @@
+import { In } from "typeorm";
+import { AppDataSource } from "../../database/source";
+import { CartProductEntity } from "../../domain/entities/cart-product.entity";
+import { CartEntity } from "../../domain/entities/cart.entity";
+import { type CartRepository } from "../../domain/repositorie/cart.repository";
+import { type CartSpecification } from "../../domain/specifications/cart.specifications";
+import { CartMapper } from "../mappers/cart.mapper";
+import { CartProductPersistenceEntity } from "../persistence/cart-product-persistence.entity";
+import { CartPersistenceEntity } from "../persistence/cart-persistence.entity";
+
+export class CartRepositoryImpl implements CartRepository {
+  private mapper: CartMapper;
+
+  constructor() {
+    this.mapper = new CartMapper();
+  }
+
+  private getCartRepo() {
+    return AppDataSource.getRepository(CartPersistenceEntity);
+  }
+
+  private getCartProductRepo() {
+    return AppDataSource.getRepository(CartProductPersistenceEntity);
+  }
+
+  async save(cart: CartEntity): Promise<CartEntity> {
+    const repo = this.getCartRepo();
+    const data = this.mapper.toPersistence(cart);
+    const model = repo.create(data);
+    const saved = await repo.save(model);
+    return this.mapper.toDomain(saved);
+  }
+
+  async findOne(spec: CartSpecification): Promise<CartEntity | null> {
+    const model = await this.getCartRepo().findOne({
+      where: spec.toWhere() as any,
+      relations: ["cartProducts"],
+    });
+    return model ? this.mapper.toDomain(model) : null;
+  }
+
+  async find(spec: CartSpecification): Promise<CartEntity[]> {
+    const models = await this.getCartRepo().find({
+      where: spec.toWhere() as any,
+      relations: ["cartProducts"],
+    });
+    return models.map((m) => this.mapper.toDomain(m));
+  }
+
+  async delete(id: string): Promise<boolean> {
+    await this.getCartProductRepo().delete({ cartId: id });
+    const result = await this.getCartRepo().delete(id);
+    return (result.affected ?? 0) > 0;
+  }
+
+  async saveProduct(product: CartProductEntity): Promise<CartProductEntity> {
+    const repo = this.getCartProductRepo();
+    const data = this.mapper.cartProductToPersistence(product);
+    const model = repo.create(data as CartProductPersistenceEntity);
+
+    const existing = await repo.findOne({
+      where: {
+        cartId: product.getCartId(),
+        productId: product.getProductId(),
+      },
+    });
+
+    if (existing) {
+      existing.quantity = product.getQuantity();
+      existing.price = product.getPrice();
+      const saved = await repo.save(existing);
+      return this.mapper.cartProductToDomain(saved);
+    }
+
+    const saved = await repo.save(model);
+    return this.mapper.cartProductToDomain(saved);
+  }
+
+  async findProductsByCartId(cartId: string): Promise<CartProductEntity[]> {
+    const models = await this.getCartProductRepo().find({
+      where: { cartId },
+    });
+    return models.map((m) => this.mapper.cartProductToDomain(m));
+  }
+
+  async findProductInCart(
+    cartId: string,
+    productId: string,
+  ): Promise<CartProductEntity | null> {
+    const model = await this.getCartProductRepo().findOne({
+      where: { cartId, productId },
+    });
+    return model ? this.mapper.cartProductToDomain(model) : null;
+  }
+
+  async deleteProduct(id: string): Promise<boolean> {
+    const result = await this.getCartProductRepo().delete(id);
+    return (result.affected ?? 0) > 0;
+  }
+
+  async deleteProductsByCartId(cartId: string): Promise<boolean> {
+    const result = await this.getCartProductRepo().delete({ cartId });
+    return (result.affected ?? 0) > 0;
+  }
+}

@@ -3,15 +3,17 @@ import "reflect-metadata";
 import { buildSwaggerSpec, swaggerUi } from "./docs/swagger";
 import { AuthController } from "./http/controllers/auth.controller";
 import { AuthMiddleware } from "./http/controllers/middlewares/auth.middleware";
+import { CartController } from "./http/controllers/cart.controller";
 import { UserController } from "./http/controllers/user.controller";
 import { authRouter } from "./router/auth-router";
+import { cartRouter } from "./router/cart-router";
 import { userRouter } from "./router/user-router";
 import { main } from "./webserver/server";
 
 export const app = express();
 
 const swaggerSpec = buildSwaggerSpec({
-  controllers: [UserController.swagger, AuthController.swagger],
+  controllers: [UserController.swagger, AuthController.swagger, CartController.swagger],
 });
 
 app.use(express.json());
@@ -27,6 +29,7 @@ app.get("/", (_req: Request, res: Response) => {
 
 app.use("/users", userRouter);
 app.use("/auth", authRouter);
+app.use("/cart", cartRouter);
 
 app.use((error: Error, _req: Request, res: Response, _next: NextFunction) => {
   console.error(error);
