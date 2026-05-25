@@ -1,10 +1,22 @@
 @baseurl = http://localhost:3000
+@api-token = Jesus_is_my_savior
 
 ### Login with valid credentials
 POST {{baseurl}}/auth/login
 Content-Type: application/json
+x-api-token: Jesus_is_my_savior
 
 {
   "email": "gabrielGodoi@email.com",
   "password": "Gabriel1"
+}
+
+
+### Refresh token route
+POST {{baseurl}}/auth/refresh-token
+Content-Type: application/json
+x-api-token: {{api-token}}
+
+{
+  "refreshToken": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6IkdhYnJpZWwgR29kb2siLCJ1c2VyRW1haWwiOiJnYWJyaWVsR29kb2lAZW1haWwuY29tIiwiaWF0IjoxNzc5NjYwNjUzLCJleHAiOjE3Nzk2OTY2NTMsInN1YiI6IjVjNGIwZWNjLTk0NDItNDBmYi1hYjc1LWRjNjRlNDUyYWYzNiJ9.WPnhPf9tMO5DrDBHgEuGzQIYVh23In0rG59-qhqB5RnfWgPlMqm_D6LoDbcVHsq8hFeKpGhESEmgnxYYg3nAZKUzCGHYTZU933okADM6soXIXjrApCtG5BCEfNbTkD2egHN9WH6OD5x0meZefl2pqMydDMllQbJM6MAg2Jlu0kjUhhXmHjp5AVwhOMRBueLvlCjwE4kKE81j_qz1xwWrhwou6wCXb9Au-ju0wG6F5LXEiIM8ttVb8yhCmlpKXqtoDKR3RTqn8Ao3tLuSCGNO_azMaDKr9GKrZ2cuuaMJn_UDjn-FEiG-4GznO0gaZSKdScqt6Jd6sylNaT7NgJeC_w"
 }

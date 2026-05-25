@@ -1,0 +1,61 @@
+@baseUrl = http://localhost:3000/carts
+@api-token= Jesus_is_my_savior
+@userId = 5c4b0ecc-9442-40fb-ab75-dc64e452af36
+
+@cartId = '';
+
+@productId = '';
+
+### Create a new cart
+POST {{baseUrl}}/{{userId}}
+Content-Type: application/json
+x-api-token: {{api-token}}
+
+
+### Get cart by user ID
+GET {{baseUrl}}/user/{{userId}}
+Content-Type: application/json
+x-api-token: {{api-token}}
+
+### Get cart by cart ID
+GET {{baseUrl}}/{{cartId}}
+Content-Type: application/json
+x-api-token: {{api-token}}
+
+## Add products to cart
+POST {{baseUrl}}/{{cartId}}/products
+Content-Type: application/json
+x-api-token: {{api-token}}
+
+{
+  [
+    {
+      "productId": "{{productId}}",
+      "quantity": 2
+    },
+    {
+      "productId": "another-product-id",
+      "quantity": 1
+    }
+  ]
+}
+
+### Delete cart by ID
+DELETE {{baseUrl}}/{{cartId}}
+Content-Type: application/json
+x-api-token: {{api-token}}
+
+
+### Update product quantity in cart
+PUT {{baseUrl}}/{{cartId}}/products/{{productId}}
+Content-Type: application/json
+x-api-token: {{api-token}}
+
+{
+  "quantity": 3
+}
+
+### Remove product from cart
+DELETE {{baseUrl}}/{{cartId}}/products/{{productId}}
+Content-Type: application/json
+x-api-token: {{api-token}}

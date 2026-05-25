@@ -17,8 +17,9 @@ const createCartUseCase = new CreateCartUseCase(cartRepo);
 const findCartByIdUseCase = new FindCartByIdUseCase(cartRepo);
 const findCartByUserIdUseCase = new FindCartByUserIdUseCase(cartRepo);
 const addProductToCartUseCase = new AddProductToCartUseCase(cartRepo);
-const updateCartProductQuantityUseCase =
-  new UpdateCartProductQuantityUseCase(cartRepo);
+const updateCartProductQuantityUseCase = new UpdateCartProductQuantityUseCase(
+  cartRepo,
+);
 const removeProductFromCartUseCase = new RemoveProductFromCartUseCase(cartRepo);
 const deleteCartUseCase = new DeleteCartUseCase(cartRepo);
 
@@ -289,11 +290,7 @@ export class CartController {
     }
   }
 
-  static async findByUserId(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) {
+  static async findByUserId(req: Request, res: Response, next: NextFunction) {
     try {
       const user = (req as any).user;
       const cart = await findCartByUserIdUseCase.execute(user.id);
@@ -323,6 +320,7 @@ export class CartController {
   static async addProduct(req: Request, res: Response, next: NextFunction) {
     try {
       const user = (req as any).user;
+      console.log(user);
       const cart = await addProductToCartUseCase.execute(
         req.params.cartId as string,
         user.id,
@@ -353,11 +351,7 @@ export class CartController {
     }
   }
 
-  static async removeProduct(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) {
+  static async removeProduct(req: Request, res: Response, next: NextFunction) {
     try {
       const user = (req as any).user;
       const cart = await removeProductFromCartUseCase.execute(
@@ -374,10 +368,7 @@ export class CartController {
   static async delete(req: Request, res: Response, next: NextFunction) {
     try {
       const user = (req as any).user;
-      await deleteCartUseCase.execute(
-        req.params.id as string,
-        user.id,
-      );
+      await deleteCartUseCase.execute(req.params.id as string, user.id);
       res.status(204).send();
     } catch (error) {
       next(error);

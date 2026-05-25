@@ -14,6 +14,16 @@ export interface JwtPayload {
 
 export class CartMiddleware {
   public async verifyToken(req: Request, res: Response, next: NextFunction) {
+    const verifiedRoutes: string[] = ["/cart"];
+
+    const isVerifiedRoute = verifiedRoutes.some((route) =>
+      req.url.startsWith(route),
+    );
+
+    if (!isVerifiedRoute) {
+      return next();
+    }
+
     const authHeader = req.headers["authorization"];
 
     if (!authHeader) {

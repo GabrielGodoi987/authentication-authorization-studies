@@ -1,13 +1,8 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from "typeorm";
+import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { CartPersistenceEntity } from "./cart-persistence.entity";
+import { ProductPersistenceEntity } from "./product-persistence.entity";
 
-@Entity("cart_products")
+@Entity("cart_items")
 export class CartProductPersistenceEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
@@ -30,4 +25,13 @@ export class CartProductPersistenceEntity {
   @ManyToOne(() => CartPersistenceEntity, (cart) => cart.cartProducts)
   @JoinColumn({ name: "cartId" })
   cart: CartPersistenceEntity;
+
+  @ManyToOne(() => ProductPersistenceEntity)
+  @JoinColumn({ name: "productId" })
+  product: ProductPersistenceEntity;
+
+  @BeforeInsert()
+  calculatePrice() {
+    this.price = this.quantity * this.price;
+  }
 }

@@ -27,6 +27,12 @@ export function buildSwaggerSpec({ controllers, schemas }: SwaggerSpecOptions) {
           bearerFormat: "JWT",
           description: "JWT token obtained from login endpoint",
         },
+        arguments: {
+          type: "apiKey",
+          in: "header",
+          name: "x-api-token",
+          description: "API token for accessing protected endpoints",
+        },
       },
     },
     security: [
