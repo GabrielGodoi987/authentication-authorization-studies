@@ -1,27 +1,40 @@
 import { UserPersistenceEntity } from "../../infrastructure/persistence/user-persistence.entity";
+import { Specification } from "../../lib/specifications-base/base.specifications";
 
-export interface UserSpecification {
-  toWhere(): Partial<UserPersistenceEntity>;
-}
+export class FindUserByIdSpec extends Specification<UserPersistenceEntity> {
+  constructor(private readonly id: string) {
+    super();
+  }
 
-export class FindUserByIdSpec implements UserSpecification {
-  constructor(private readonly id: string) {}
+  isSatisfiedBy(candidate: UserPersistenceEntity): boolean {
+    return candidate.id === this.id;
+  }
 
-  toWhere(): Partial<UserPersistenceEntity> {
+  toWhere(): Partial<any> {
     return { id: this.id };
   }
 }
 
-export class FindUserByEmailSpec implements UserSpecification {
-  constructor(private readonly email: string) {}
+export class FindUserByEmailSpec extends Specification<UserPersistenceEntity> {
+  constructor(private readonly email: string) {
+    super();
+  }
 
-  toWhere(): Partial<UserPersistenceEntity> {
-    return { email: this.email as unknown as UserPersistenceEntity["email"] };
+  isSatisfiedBy(candidate: UserPersistenceEntity): boolean {
+    return candidate.email === this.email;
+  }
+
+  toWhere(): Partial<any> {
+    return { email: this.email };
   }
 }
 
-export class FindAllUsersSpec implements UserSpecification {
-  toWhere(): Partial<UserPersistenceEntity> {
-    return {};
+export class FindAllUsersSpec extends Specification<UserPersistenceEntity> {
+  isSatisfiedBy(candidate: UserPersistenceEntity): boolean {
+    return candidate.deletedAt === null || candidate.deletedAt === undefined;
+  }
+
+  toWhere(): Partial<any> {
+    return { deletedAt: null };
   }
 }

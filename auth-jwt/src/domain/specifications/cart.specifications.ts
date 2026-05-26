@@ -1,27 +1,20 @@
 import { CartPersistenceEntity } from "../../infrastructure/persistence/cart-persistence.entity";
+import { WhereSpecification } from "../../lib/specifications-base/base.specifications";
 
-export interface CartSpecification {
-  toWhere(): Partial<CartPersistenceEntity>;
-}
-
-export class FindCartByIdSpec implements CartSpecification {
-  constructor(private readonly id: string) {}
-
-  toWhere(): Partial<CartPersistenceEntity> {
-    return { id: this.id };
+export class FindCartByIdSpec extends WhereSpecification<CartPersistenceEntity> {
+  constructor(id: string) {
+    super({ id });
   }
 }
 
-export class FindCartByUserIdSpec implements CartSpecification {
-  constructor(private readonly userId: string) {}
-
-  toWhere(): Partial<CartPersistenceEntity> {
-    return { userId: this.userId };
+export class FindCartByUserIdSpec extends WhereSpecification<CartPersistenceEntity> {
+  constructor(userId: string) {
+    super({ userId });
   }
 }
 
-export class FindAllCartsSpec implements CartSpecification {
-  toWhere(): Partial<CartPersistenceEntity> {
-    return {};
+export class FindAllCartsSpec extends WhereSpecification<CartPersistenceEntity> {
+  constructor() {
+    super({});
   }
 }

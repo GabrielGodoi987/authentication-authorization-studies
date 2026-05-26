@@ -1,21 +1,18 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { CartProductPersistenceEntity } from "./cart-product-persistence.entity";
+import { Column, Entity, OneToMany } from "typeorm";
+import { BasePersistenceEntity } from "./base-typeORM/base-persistence.entity";
+import { CartItemsPersistenceEntity } from "./cart-items-persistence.entity";
 
 @Entity("carts")
-export class CartPersistenceEntity {
-  @PrimaryGeneratedColumn("uuid")
-  id: string;
-
+export class CartPersistenceEntity extends BasePersistenceEntity {
   @Column({ name: "userId" })
   userId: string;
 
   @Column({ type: "float", default: 0 })
   price: number;
 
-  @OneToMany(
-    () => CartProductPersistenceEntity,
-    (product) => product.cart,
-    { cascade: true, eager: true },
-  )
-  cartProducts: CartProductPersistenceEntity[];
+  @OneToMany(() => CartItemsPersistenceEntity, (cartItem) => cartItem.cart, {
+    cascade: true,
+    eager: true,
+  })
+  cartItems: CartItemsPersistenceEntity[];
 }

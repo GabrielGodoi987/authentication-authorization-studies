@@ -1,17 +1,9 @@
 import bcrypt from "bcrypt";
-import {
-  BeforeInsert,
-  BeforeUpdate,
-  Column,
-  Entity,
-  PrimaryGeneratedColumn,
-} from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity } from "typeorm";
+import { BasePersistenceEntity } from "./base-typeORM/base-persistence.entity";
 
 @Entity("users")
-export class UserPersistenceEntity {
-  @PrimaryGeneratedColumn("uuid")
-  id: string;
-
+export class UserPersistenceEntity extends BasePersistenceEntity {
   @Column()
   name: string;
 
