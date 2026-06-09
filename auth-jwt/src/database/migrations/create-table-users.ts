@@ -8,8 +8,9 @@ export class CreateTableUsersf47ac10b58cc4372a5670e02b2c3d479 implements Migrati
         name TEXT NOT NULL,
         email TEXT NOT NULL UNIQUE,
         password TEXT NOT NULL,
-        created_at DATETIME DEFAULT (datetime('now')),
-        updated_at DATETIME DEFAULT (datetime('now'))
+        createdAt DATETIME NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+        updatedAt DATETIME NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+        deletedAt DATETIME
       );
     `);
   }

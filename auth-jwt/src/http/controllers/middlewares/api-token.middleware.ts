@@ -4,8 +4,6 @@ export class ApiTokenMiddleware {
   public async verifyApiToken(req: Request, res: Response, next: NextFunction) {
     const apiToken = req.headers["x-api-token"];
 
-    console.log(apiToken);
-
     if (!apiToken) {
       return res.status(401).json({ message: "API token not provided" });
     }

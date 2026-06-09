@@ -1,5 +1,5 @@
 import { v4 } from "uuid";
-import { CartProductEntity } from "../domain/entities/cart-product.entity";
+import { CartItemsEntity } from "../domain/entities/cart-items.entity";
 import { CartEntity } from "../domain/entities/cart.entity";
 import { type CartRepository } from "../domain/repositorie/cart.repository";
 import {
@@ -81,38 +81,34 @@ export class AddProductToCartUseCase {
       });
     }
 
-    const product = new CartProductEntity(
+    const product = new CartItemsEntity(
       null,
-      cartId,
       data.productId,
-      data.productName,
       data.quantity,
       data.price,
+      cartId,
     );
 
     const existing = cart
-      .getCartProducts()
+      .getCartItems()
       .find((p) => p.getProductId() === data.productId);
 
     if (existing) {
       const newQty = existing.getQuantity() + data.quantity;
       await this.cartRepo.saveProduct(
-        new CartProductEntity(
+        new CartItemsEntity(
           existing.getId(),
-          cartId,
           data.productId,
-          data.productName,
           newQty,
           data.price,
+          cartId,
         ),
       );
     } else {
       await this.cartRepo.saveProduct(product);
     }
 
-    const updated = await this.cartRepo.findOne(
-      new FindCartByIdSpec(cartId),
-    );
+    const updated = await this.cartRepo.findOne(new FindCartByIdSpec(cartId));
     return updated!;
   }
 }
@@ -148,9 +144,7 @@ export class UpdateCartProductQuantityUseCase {
     existing.setQuantity(quantity);
     await this.cartRepo.saveProduct(existing);
 
-    const updated = await this.cartRepo.findOne(
-      new FindCartByIdSpec(cartId),
-    );
+    const updated = await this.cartRepo.findOne(new FindCartByIdSpec(cartId));
     return updated!;
   }
 }
@@ -184,9 +178,7 @@ export class RemoveProductFromCartUseCase {
 
     await this.cartRepo.deleteProduct(existing.getId());
 
-    const updated = await this.cartRepo.findOne(
-      new FindCartByIdSpec(cartId),
-    );
+    const updated = await this.cartRepo.findOne(new FindCartByIdSpec(cartId));
     return updated!;
   }
 }

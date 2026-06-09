@@ -7,9 +7,11 @@ export class CreateTableCartItems1779670100000 implements MigrationInterface {
         id TEXT PRIMARY KEY,
         cartId TEXT NOT NULL,
         productId TEXT NOT NULL,
-        productName TEXT NOT NULL,
-        quantity INTEGER DEFAULT 1,
-        price REAL NOT NULL,
+        quantity INTEGER NOT NULL DEFAULT 1,
+        value REAL NOT NULL,
+        createdAt DATETIME NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+        updatedAt DATETIME NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+        deletedAt DATETIME,
         FOREIGN KEY (cartId) REFERENCES carts(id),
         FOREIGN KEY (productId) REFERENCES products(id)
       );

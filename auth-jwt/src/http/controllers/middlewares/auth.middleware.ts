@@ -17,7 +17,7 @@ export class AuthMiddleware {
       return next();
     }
 
-    const authHeader = req.headers["authorization"];
+    const authHeader = req.headers["authorization"] || req.cookies?.accessToken;
 
     if (!authHeader) {
       next(
@@ -28,7 +28,7 @@ export class AuthMiddleware {
       return;
     }
 
-    const token = authHeader.split(" ")[1];
+    const token = authHeader.split(" ")[1] ?? authHeader;
 
     if (!token) {
       return res.status(401).json({ message: "Token not provided" });

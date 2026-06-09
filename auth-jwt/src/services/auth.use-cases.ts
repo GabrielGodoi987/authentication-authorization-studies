@@ -57,9 +57,6 @@ export class TokenProvider {
     email: string;
   }): string {
     try {
-      console.log('Chegou aqui');
-      console.log(processEnv.JWT_REFRESH_TOKEN_EXPIRESIN);
-
       const signOptions: SignOptions = {
         expiresIn:
           processEnv.JWT_REFRESH_TOKEN_EXPIRESIN as SignOptions["expiresIn"],
@@ -91,12 +88,18 @@ export class AuthUseCase {
         new FindUserByEmailSpec(email),
       );
 
-      if (!user || !bcrypt.compareSync(password, user.getPassword())) {
+      if (!user) {
         throw new InvalidCredentialsExceptions({
           message: "Invalid credentials",
           options: {
-            cause: `User null: ${user} or credentials is not correct`,
+            cause: `User null: ${email} or credentials is not correct`,
           },
+        });
+      }
+
+      if (!bcrypt.compare(password, user.getPassword())) {
+        throw new InvalidCredentialsExceptions({
+          message: "Credential erro",
         });
       }
 

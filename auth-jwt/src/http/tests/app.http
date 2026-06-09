@@ -1,15 +1,17 @@
 @baseurl = http://localhost:3000
-@token-jwt = "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1balJdrbmorlCoYp0MTQ8QM3zH47xtkQnlfD2kjEZcMVAmpGfr7x2mb6lBJ3qe1OUOWA7iB5XTxandKWhDfh+szEJZvJmPj1vZ4d1K7Z5LmbSZujOZ6Avv8ZarHML1zKsibgqwGPCeJ6Pd4rrdgJKkHqWW9hYD/XAAnGJ241HQQIxCL0YEkc0Q2Iemu0fTK4epLUoXJdrGzLEgUmKTpfVS2cCSqCwMczUSvk35VWbLejLSHBKTakFupk/BKlmC+frzIrDPvnwaElHOhySX/LMk4csBceMuQj2Y99Lc1Vhal04AJcZiOGzkcK4emv9EmpS67mXTArQ6cX7s86yxjKgwIDAQAB\n-----END PUBLIC KEY-----"
+@token-jwt = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6IkdhYnJpZWwgR29kb2kiLCJ1c2VyRW1haWwiOiJnYWJyaWVsR29kb2lAZW1haWwuY29tIiwiaWF0IjoxNzgxMDQ4MDM3LCJleHAiOjE3ODEwNDgwOTcsInN1YiI6IjIzOGVlZGJkLWVkYzMtNDZkMS1iYWJiLTBhZmVlYjNjYTU3ZSJ9.qiQqOUXZvPpGAIlMfOxkYlyAMqsqHDJvyEcKhVfrfBKiDkbSB-TSQR5i6UoQmByoBcdQw_vSmK0Vtke_5gqkdqZShuHm1ZSb2qjpiqTLFPLHjn1vt-9_l60XiDMzozVdCm5GcCn5ZOJvrIHrEzUWtCts8XEvUE-q5lXq33HDSNqbt4wJIV5VUFACt-2maSRmgLFVe5kMUbAMlOs2trfryTInn-EtUeKayrUK4A3CWFxww63vFkmIRXPKiZHqUXFNk4-lpFBBBjQ1vkqZDuEFDUY438-78rUdWQvIK07XLFsBAH1QKY7FPZDfo_r8hr4IhGXYdPGJ2meBrZWJcS4rMw""
+@api-token = Jesus_is_my_savior
 
 ### Create a new user
 # @name CreateUserAction
 POST {{baseurl}}/users
 Content-Type: application/json
-Authorization: Bearer {{token-jwt}}
+Cookie: accessToken={{token-jwt}}
+x-api-token: {{api-token}}
 
 {
-  "name": "John Doe",
-  "email": "johndoe@email.com",
+  "name": "John Doe2 - teste",
+  "email": "johndoe2@email.com",
   "password": "Strong1Pass"
 }
 

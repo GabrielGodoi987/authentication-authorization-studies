@@ -10,20 +10,20 @@ export abstract class BasePersistenceEntity {
   id: string;
 
   @CreateDateColumn({
-    type: "timestamp",
-    default: () => "CURRENT_TIMESTAMP(6)",
+    type: "datetime",
+    default: () => "CURRENT_TIMESTAMP",
   })
   createdAt: Date;
 
   @UpdateDateColumn({
-    type: "timestamp",
-    default: () => "CURRENT_TIMESTAMP(6)",
-    onUpdate: "CURRENT_TIMESTAMP(6)",
+    type: "datetime",
+    default: () => "CURRENT_TIMESTAMP",
+    onUpdate: "CURRENT_TIMESTAMP",
   })
   updatedAt: Date;
 
   @DeleteDateColumn({
-    type: "timestamp",
+    type: "datetime",
     nullable: true,
   })
   deletedAt: Date | null;

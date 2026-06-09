@@ -1,3 +1,4 @@
+import CookieParser from "cookie-parser";
 import express, { NextFunction, Request, Response } from "express";
 import "reflect-metadata";
 import { buildSwaggerSpec, swaggerUi } from "./docs/swagger";
@@ -23,20 +24,21 @@ const swaggerSpec = buildSwaggerSpec({
 });
 
 app.use(express.json());
+app.use(CookieParser());
 
 const apiTokenMiddleware = new ApiTokenMiddleware();
 const cartMiddleware = new CartMiddleware();
 const authMiddleware = new AuthMiddleware();
-
-app.use(apiTokenMiddleware.verifyApiToken);
-app.use(authMiddleware.verifyToken);
-app.use(cartMiddleware.verifyToken);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get("/", (_req: Request, res: Response) => {
   res.status(200).json({ message: "Welcome to the Auth JWT API" });
 });
+
+app.use(apiTokenMiddleware.verifyApiToken);
+app.use(authMiddleware.verifyToken);
+app.use(cartMiddleware.verifyToken);
 
 app.use("/users", userRouter);
 app.use("/auth", authRouter);

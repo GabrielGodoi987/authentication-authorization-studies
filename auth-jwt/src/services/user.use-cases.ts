@@ -10,6 +10,7 @@ import {
   UserAlreadyExistsExceptions,
   UserNotFoundException,
 } from "../http/exceptions/user.exceptions";
+import { UpdateUserDto } from "./dto/update-user.dto";
 
 export class CreateUserUseCase {
   constructor(private readonly userRepo: UserRepository) {}
@@ -31,11 +32,7 @@ export class CreateUserUseCase {
 
     const entity = new UserEntity(v4(), data.name, data.email, data.password);
 
-    return this.userRepo.save({
-      name: entity.getName(),
-      email: entity.getEmail(),
-      password: entity.getPassword(),
-    });
+    return this.userRepo.save(entity);
   }
 }
 
@@ -80,17 +77,18 @@ export class FindAllUsersUseCase {
 export class UpdateUserUseCase {
   constructor(private readonly userRepo: UserRepository) {}
 
-  async execute(
-    id: string,
-    data: Partial<{
-      name: string;
-      email: string;
-      password: string;
-    }>,
-  ): Promise<UserEntity | null> {
+  async execute(id: string, data: UpdateUserDto): Promise<UserEntity | null> {
     try {
-      await this.verifyIfUserExists(id);
-      return this.userRepo.update(id, data);
+      const user = await this.verifyIfUserExists(id);
+
+      const updatedUser = new UserEntity(
+        user.getId(),
+        data.name ?? user.getName(),
+        data.email ?? user.getEmail(),
+        data.password ?? user.getPassword(),
+      );
+
+      return this.userRepo.update(id, updatedUser);
     } catch (error: any) {
       console.error(error);
       return error.message;
@@ -104,6 +102,8 @@ export class UpdateUserUseCase {
         message: "User was not found",
       });
     }
+
+    return user;
   }
 }
 

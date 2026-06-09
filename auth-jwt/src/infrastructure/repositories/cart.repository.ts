@@ -1,8 +1,8 @@
 import { AppDataSource } from "../../database/source";
-import { CartProductEntity } from "../../domain/entities/cart-product.entity";
+import { CartItemsEntity } from "../../domain/entities/cart-items.entity";
 import { CartEntity } from "../../domain/entities/cart.entity";
 import { type CartRepository } from "../../domain/repositorie/cart.repository";
-import { type CartSpecification } from "../../domain/specifications/cart.specifications";
+import { WhereSpecification } from "../../lib/specifications-base/base.specifications";
 import { CartMapper } from "../mappers/cart.mapper";
 import { CartItemsPersistenceEntity } from "../persistence/cart-items-persistence.entity";
 import { CartPersistenceEntity } from "../persistence/cart-persistence.entity";
@@ -30,7 +30,9 @@ export class CartRepositoryImpl implements CartRepository {
     return this.mapper.toDomain(saved);
   }
 
-  async findOne(spec: CartSpecification): Promise<CartEntity | null> {
+  async findOne(
+    spec: WhereSpecification<CartPersistenceEntity>,
+  ): Promise<CartEntity | null> {
     const model = await this.getCartRepo().findOne({
       where: spec.toWhere() as any,
       relations: ["cartProducts"],
@@ -38,7 +40,9 @@ export class CartRepositoryImpl implements CartRepository {
     return model ? this.mapper.toDomain(model) : null;
   }
 
-  async find(spec: CartSpecification): Promise<CartEntity[]> {
+  async find(
+    spec: WhereSpecification<CartPersistenceEntity>,
+  ): Promise<CartEntity[]> {
     const models = await this.getCartRepo().find({
       where: spec.toWhere() as any,
       relations: ["cartProducts"],
@@ -52,7 +56,7 @@ export class CartRepositoryImpl implements CartRepository {
     return (result.affected ?? 0) > 0;
   }
 
-  async saveProduct(product: CartProductEntity): Promise<CartProductEntity> {
+  async saveProduct(product: CartItemsEntity): Promise<CartItemsEntity> {
     const repo = this.getCartProductRepo();
     const data = this.mapper.cartProductToPersistence(product);
     const model = repo.create(data as CartItemsPersistenceEntity);
@@ -66,7 +70,7 @@ export class CartRepositoryImpl implements CartRepository {
 
     if (existing) {
       existing.quantity = product.getQuantity();
-      existing.price = product.getPrice();
+      existing.value = product.getPrice();
       const saved = await repo.save(existing);
       return this.mapper.cartProductToDomain(saved);
     }
@@ -75,7 +79,7 @@ export class CartRepositoryImpl implements CartRepository {
     return this.mapper.cartProductToDomain(saved);
   }
 
-  async findProductsByCartId(cartId: string): Promise<CartProductEntity[]> {
+  async findProductsByCartId(cartId: string): Promise<CartItemsEntity[]> {
     const models = await this.getCartProductRepo().find({
       where: { cartId },
     });
@@ -85,7 +89,7 @@ export class CartRepositoryImpl implements CartRepository {
   async findProductInCart(
     cartId: string,
     productId: string,
-  ): Promise<CartProductEntity | null> {
+  ): Promise<CartItemsEntity | null> {
     const model = await this.getCartProductRepo().findOne({
       where: { cartId, productId },
     });

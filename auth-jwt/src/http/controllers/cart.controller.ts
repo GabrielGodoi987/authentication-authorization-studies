@@ -320,7 +320,6 @@ export class CartController {
   static async addProduct(req: Request, res: Response, next: NextFunction) {
     try {
       const user = (req as any).user;
-      console.log(user);
       const cart = await addProductToCartUseCase.execute(
         req.params.cartId as string,
         user.id,

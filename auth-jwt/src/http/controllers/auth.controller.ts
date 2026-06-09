@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import type { SwaggerController } from "../../docs/types";
 import { UserRepositoryImpl } from "../../infrastructure/repositories/user.repository";
+import { processEnv } from "../../lib/consts";
 import {
   AuthUseCase,
   RefreshTokenUseCase,
@@ -165,7 +166,10 @@ export class AuthController {
         email,
         password,
       );
-      
+
+      generateAccessTokenCookie(res, accessToken);
+      generateRefreshTokenCookie(res, refreshToken);
+
       res.status(200).json({
         user: user.toJSON(),
         accessToken,
@@ -182,6 +186,7 @@ export class AuthController {
       const refreshToken =
         req.body?.refreshToken ||
         req.headers.authorization?.replace("Bearer ", "");
+
       if (!refreshToken) {
         next(
           new MissingTokenException({
@@ -213,4 +218,24 @@ export class AuthController {
       return;
     }
   }
+}
+
+export function generateAccessTokenCookie(res: Response, accessToken: string) {
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    secure: processEnv.NODE_ENV === "production",
+    sameSite: "none", // The application is cross-site
+    maxAge: 60000, // 1 minuto
+    path: "/", // It will be sent to all API addresses that I have
+  });
+}
+
+export function generateRefreshTokenCookie(res: Response, accessToken: string) {
+  res.cookie("refreshToken", accessToken, {
+    httpOnly: true,
+    secure: processEnv.NODE_ENV === "production",
+    sameSite: "none",
+    maxAge: 60000 * 60 * 10, // 10 hours
+    path: "/refresh-token", // What address I need receive the refresh token? Here goes the same address
+  });
 }

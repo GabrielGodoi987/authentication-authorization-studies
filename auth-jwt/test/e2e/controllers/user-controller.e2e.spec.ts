@@ -1,7 +1,7 @@
 import request from "supertest";
 import { app } from "../../../src/app";
-import { resetDataSource, getDataSource } from "../../../src/database/source";
 import { seedUsers } from "../../../src/database/seeds/user.seed";
+import { getDataSource, resetDataSource } from "../../../src/database/source";
 import { UserPersistenceEntity } from "../../../src/infrastructure/persistence/user-persistence.entity";
 
 let createdUserId: string;
@@ -31,10 +31,17 @@ describe("UserController - e2e test", () => {
     it("creates a user and returns 201", async () => {
       const res = await request(app)
         .post("/users")
-        .send({ name: "John Doe", email: "john@doe.com", password: "Strong1Pass" });
+        .send({
+          name: "John Doe",
+          email: "john@doe.com",
+          password: "Strong1Pass",
+        });
 
       expect(res.status).toBe(201);
-      expect(res.body).toMatchObject({ name: "John Doe", email: "john@doe.com" });
+      expect(res.body).toMatchObject({
+        name: "John Doe",
+        email: "john@doe.com",
+      });
       expect(res.body.id).toEqual(expect.any(String));
       createdUserId = res.body.id;
     });
@@ -42,11 +49,19 @@ describe("UserController - e2e test", () => {
     it("returns 500 when email already exists", async () => {
       await request(app)
         .post("/users")
-        .send({ name: "John Doe", email: "john@doe.com", password: "Strong1Pass" });
+        .send({
+          name: "John Doe",
+          email: "john@doe.com",
+          password: "Strong1Pass",
+        });
 
       const res = await request(app)
         .post("/users")
-        .send({ name: "Jane Doe", email: "john@doe.com", password: "Strong1Pass" });
+        .send({
+          name: "Jane Doe",
+          email: "john@doe.com",
+          password: "Strong1Pass",
+        });
 
       expect(res.status).toBe(500);
       expect(res.body).toMatchObject({ message: "Internal Server Error" });
@@ -63,7 +78,7 @@ describe("UserController - e2e test", () => {
 
   describe("GET /users", () => {
     beforeEach(async () => {
-      await seedUsers(getDataSource());
+      await seedUsers();
     });
 
     it("returns all users", async () => {
@@ -72,7 +87,10 @@ describe("UserController - e2e test", () => {
       expect(res.status).toBe(200);
       expect(Array.isArray(res.body)).toBe(true);
       expect(res.body.length).toBeGreaterThanOrEqual(10);
-      expect(res.body[0]).toMatchObject({ name: "User 1", email: "user1@example.com" });
+      expect(res.body[0]).toMatchObject({
+        name: "User 1",
+        email: "user1@example.com",
+      });
       expect(res.body[0].id).toEqual(expect.any(String));
     });
 
@@ -86,7 +104,7 @@ describe("UserController - e2e test", () => {
 
   describe("GET /users/:id", () => {
     beforeEach(async () => {
-      await seedUsers(getDataSource());
+      await seedUsers();
     });
 
     it("returns a user by id", async () => {
@@ -96,7 +114,11 @@ describe("UserController - e2e test", () => {
       const res = await request(app).get(`/users/${id}`);
 
       expect(res.status).toBe(200);
-      expect(res.body).toMatchObject({ id, name: "User 1", email: "user1@example.com" });
+      expect(res.body).toMatchObject({
+        id,
+        name: "User 1",
+        email: "user1@example.com",
+      });
     });
 
     it("returns 404 when user not found", async () => {
@@ -109,18 +131,25 @@ describe("UserController - e2e test", () => {
 
   describe("GET /users/search?email=", () => {
     beforeEach(async () => {
-      await seedUsers(getDataSource());
+      await seedUsers();
     });
 
     it("returns a user by email", async () => {
-      const res = await request(app).get("/users/search?email=user1@example.com");
+      const res = await request(app).get(
+        "/users/search?email=user1@example.com",
+      );
 
       expect(res.status).toBe(200);
-      expect(res.body).toMatchObject({ name: "User 1", email: "user1@example.com" });
+      expect(res.body).toMatchObject({
+        name: "User 1",
+        email: "user1@example.com",
+      });
     });
 
     it("returns 404 when email not found", async () => {
-      const res = await request(app).get("/users/search?email=unknown@test.com");
+      const res = await request(app).get(
+        "/users/search?email=unknown@test.com",
+      );
 
       expect(res.status).toBe(404);
       expect(res.body).toMatchObject({ message: "User not found" });
@@ -130,13 +159,15 @@ describe("UserController - e2e test", () => {
       const res = await request(app).get("/users/search");
 
       expect(res.status).toBe(400);
-      expect(res.body).toMatchObject({ message: "Email query parameter is required" });
+      expect(res.body).toMatchObject({
+        message: "Email query parameter is required",
+      });
     });
   });
 
   describe("PUT /users/:id", () => {
     beforeEach(async () => {
-      await seedUsers(getDataSource());
+      await seedUsers();
     });
 
     it("updates a user and returns 200", async () => {
@@ -148,7 +179,11 @@ describe("UserController - e2e test", () => {
         .send({ name: "Updated Name" });
 
       expect(res.status).toBe(200);
-      expect(res.body).toMatchObject({ id, name: "Updated Name", email: "user1@example.com" });
+      expect(res.body).toMatchObject({
+        id,
+        name: "Updated Name",
+        email: "user1@example.com",
+      });
     });
 
     it("returns 404 when user not found", async () => {
@@ -163,7 +198,7 @@ describe("UserController - e2e test", () => {
 
   describe("DELETE /users/:id", () => {
     beforeEach(async () => {
-      await seedUsers(getDataSource());
+      await seedUsers();
     });
 
     it("deletes a user and returns 204", async () => {
