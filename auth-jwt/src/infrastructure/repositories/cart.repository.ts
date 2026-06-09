@@ -1,11 +1,10 @@
-import { In } from "typeorm";
 import { AppDataSource } from "../../database/source";
 import { CartProductEntity } from "../../domain/entities/cart-product.entity";
 import { CartEntity } from "../../domain/entities/cart.entity";
 import { type CartRepository } from "../../domain/repositorie/cart.repository";
 import { type CartSpecification } from "../../domain/specifications/cart.specifications";
 import { CartMapper } from "../mappers/cart.mapper";
-import { CartProductPersistenceEntity } from "../persistence/cart-product-persistence.entity";
+import { CartItemsPersistenceEntity } from "../persistence/cart-items-persistence.entity";
 import { CartPersistenceEntity } from "../persistence/cart-persistence.entity";
 
 export class CartRepositoryImpl implements CartRepository {
@@ -20,7 +19,7 @@ export class CartRepositoryImpl implements CartRepository {
   }
 
   private getCartProductRepo() {
-    return AppDataSource.getRepository(CartProductPersistenceEntity);
+    return AppDataSource.getRepository(CartItemsPersistenceEntity);
   }
 
   async save(cart: CartEntity): Promise<CartEntity> {
@@ -56,7 +55,7 @@ export class CartRepositoryImpl implements CartRepository {
   async saveProduct(product: CartProductEntity): Promise<CartProductEntity> {
     const repo = this.getCartProductRepo();
     const data = this.mapper.cartProductToPersistence(product);
-    const model = repo.create(data as CartProductPersistenceEntity);
+    const model = repo.create(data as CartItemsPersistenceEntity);
 
     const existing = await repo.findOne({
       where: {

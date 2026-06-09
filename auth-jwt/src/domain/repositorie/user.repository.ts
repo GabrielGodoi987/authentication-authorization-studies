@@ -1,10 +1,13 @@
+import { UserPersistenceEntity } from "../../infrastructure/persistence/user-persistence.entity";
+import { Specification } from "../../lib/specifications-base/base.specifications";
 import { UserEntity } from "../entities/user.entity";
-import { UserSpecification } from "../specifications/user.specifications";
 
 export interface UserRepository {
-  save(data: Record<string, any>): Promise<UserEntity>;
-  findOne(spec: UserSpecification): Promise<UserEntity | null>;
-  find(spec: UserSpecification): Promise<UserEntity[]>;
-  update(id: string, data: Record<string, any>): Promise<UserEntity | null>;
+  save(data: UserEntity): Promise<UserEntity>;
+  findOne(
+    spec: Specification<UserPersistenceEntity>,
+  ): Promise<UserEntity | null>;
+  find(spec: Specification<UserPersistenceEntity>): Promise<UserEntity[]>;
+  update(id: string, data: Partial<UserEntity>): Promise<UserEntity | null>;
   delete(id: string): Promise<boolean>;
 }

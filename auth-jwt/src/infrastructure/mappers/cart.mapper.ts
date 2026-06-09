@@ -1,16 +1,16 @@
-import { CartProductEntity } from "../../domain/entities/cart-product.entity";
+import { CartItemsEntity } from "../../domain/entities/cart-items.entity";
 import { CartEntity } from "../../domain/entities/cart.entity";
-import { CartProductPersistenceEntity } from "../persistence/cart-product-persistence.entity";
+import { CartItemsPersistenceEntity } from "../persistence/cart-items-persistence.entity";
 import { CartPersistenceEntity } from "../persistence/cart-persistence.entity";
 
 export class CartMapper {
   toDomain(persistence: CartPersistenceEntity): CartEntity {
     const cart = new CartEntity(persistence.id, persistence.userId);
-    if (persistence.cartProducts) {
-      const products = persistence.cartProducts.map((cp) =>
-        this.cartProductToDomain(cp),
+    if (persistence.cartItems) {
+      const products = persistence.cartItems.map((ci) =>
+        this.cartProductToDomain(ci),
       );
-      cart.setCartProducts(products);
+      cart.getCartItems().push(...products);
     }
     return cart;
   }
@@ -24,28 +24,26 @@ export class CartMapper {
   }
 
   cartProductToDomain(
-    persistence: CartProductPersistenceEntity,
-  ): CartProductEntity {
-    return new CartProductEntity(
+    persistence: CartItemsPersistenceEntity,
+  ): CartItemsEntity {
+    return new CartItemsEntity(
       persistence.id,
-      persistence.cartId,
       persistence.productId,
-      persistence.productName,
       persistence.quantity,
-      persistence.price,
+      persistence.value,
+      persistence.cartId,
     );
   }
 
   cartProductToPersistence(
-    domain: CartProductEntity,
-  ): Partial<CartProductPersistenceEntity> {
+    domain: CartItemsEntity,
+  ): Partial<CartItemsPersistenceEntity> {
     return {
       id: domain.getId(),
       cartId: domain.getCartId(),
       productId: domain.getProductId(),
-      productName: domain.getProductName(),
       quantity: domain.getQuantity(),
-      price: domain.getPrice(),
+      value: domain.getValue(),
     };
   }
 }

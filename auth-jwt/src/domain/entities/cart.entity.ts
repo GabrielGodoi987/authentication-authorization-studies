@@ -45,9 +45,14 @@ export class CartEntity {
     if (existing) {
       existing.setQuantity(existing.getQuantity() + quantity);
     } else {
-      const cartItem = new CartItemsEntity(null, product.getId(), quantity);
+      const cartItem = new CartItemsEntity(
+        null,
+        product.getId(),
+        quantity,
+        product.getPrice(),
+        this.getId(),
+      );
       this.cartItems.push(cartItem);
-      
     }
     this.recalculatePrice();
   }
@@ -60,20 +65,15 @@ export class CartEntity {
   }
 
   updateProductQuantity(productId: string, quantity: number): void {
-    const product = this.cartItems.find(
-      (p) => p.getProductId() === productId,
-    );
+    const product = this.cartItems.find((p) => p.getProductId() === productId);
     if (product) {
-      product.setQuantity(quantity);
+      product.updateQuantity(quantity);
       this.recalculatePrice();
     }
   }
 
   private recalculatePrice(): void {
-    this.price = this.cartItems.reduce(
-      (total, cp) => total + cp.getPrice(),
-      0,
-    );
+    this.price = this.cartItems.reduce((total, cp) => total + cp.getPrice(), 0);
   }
 
   toJSON() {
