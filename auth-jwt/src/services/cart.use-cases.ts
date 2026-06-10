@@ -1,7 +1,7 @@
 import { v4 } from "uuid";
 import { CartItemsEntity } from "../domain/entities/cart-items.entity";
 import { CartEntity } from "../domain/entities/cart.entity";
-import { type CartRepository } from "../domain/repositorie/cart.repository";
+import { type CartRepository } from "../domain/repositories/cart.repository";
 import {
   FindCartByIdSpec,
   FindCartByUserIdSpec,

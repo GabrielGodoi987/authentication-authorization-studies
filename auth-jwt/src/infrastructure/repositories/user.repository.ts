@@ -1,7 +1,7 @@
 import { Repository } from "typeorm";
 import { AppDataSource } from "../../database/source";
 import { UserEntity } from "../../domain/entities/user.entity";
-import { type UserRepository } from "../../domain/repositorie/user.repository";
+import { type UserRepository } from "../../domain/repositories/user.repository";
 import { Specification } from "../../lib/specifications-base/base.specifications";
 import { UserMapper } from "../mappers/user.mapper";
 import { UserPersistenceEntity } from "../persistence/user-persistence.entity";

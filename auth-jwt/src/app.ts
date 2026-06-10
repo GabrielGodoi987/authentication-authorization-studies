@@ -1,5 +1,5 @@
 import CookieParser from "cookie-parser";
-import express, { NextFunction, Request, Response } from "express";
+import express, { Request, Response } from "express";
 import "reflect-metadata";
 import { buildSwaggerSpec, swaggerUi } from "./docs/swagger";
 import { AuthController } from "./http/controllers/auth.controller";
@@ -44,7 +44,7 @@ app.use("/users", userRouter);
 app.use("/auth", authRouter);
 app.use("/carts", cartRouter);
 
-app.use((error: Error, _req: Request, res: Response, _next: NextFunction) => {
+app.use((error: Error, _req: Request, res: Response) => {
   console.error(error);
   res.status(500).json({ message: "Internal Server Error" });
 });

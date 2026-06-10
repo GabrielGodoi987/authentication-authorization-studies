@@ -1,7 +1,7 @@
 import { AppDataSource } from "../../database/source";
 import { CartItemsEntity } from "../../domain/entities/cart-items.entity";
 import { CartEntity } from "../../domain/entities/cart.entity";
-import { type CartRepository } from "../../domain/repositorie/cart.repository";
+import { type CartRepository } from "../../domain/repositories/cart.repository";
 import { WhereSpecification } from "../../lib/specifications-base/base.specifications";
 import { CartMapper } from "../mappers/cart.mapper";
 import { CartItemsPersistenceEntity } from "../persistence/cart-items-persistence.entity";

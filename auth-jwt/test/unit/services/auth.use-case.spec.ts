@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { UserRepository } from "../../../src/domain/repositorie/user.repository";
+import { UserRepository } from "../../../src/domain/repositories/user.repository";
 import { UserRepositoryImpl } from "../../../src/infrastructure/repositories/user.repository";
 import { AuthUseCase } from "../../../src/services/auth.use-cases";
 import { makeUser } from "../unit-helpers/make-user.helper";
@@ -28,7 +28,10 @@ describe("AuthUseCase - unit test", () => {
     const result = await useCase.execute(user.getEmail(), "Strong1Pass");
 
     expect(repo.findOne).toHaveBeenCalledTimes(1);
-    expect(bcrypt.compareSync).toHaveBeenCalledWith("Strong1Pass", user.getPassword());
+    expect(bcrypt.compareSync).toHaveBeenCalledWith(
+      "Strong1Pass",
+      user.getPassword(),
+    );
     expect(jwt.sign).toHaveBeenCalledWith(
       { userName: user.getName(), userEmail: user.getEmail() },
       expect.any(String),

@@ -4,38 +4,34 @@ import { seedUsers } from "../../../src/database/seeds/user.seed";
 import { getDataSource, resetDataSource } from "../../../src/database/source";
 import { UserPersistenceEntity } from "../../../src/infrastructure/persistence/user-persistence.entity";
 
-let createdUserId: string;
-
-beforeAll(async () => {
-  process.env.DB_PATH = ":memory:";
-  resetDataSource();
-  const ds = await getDataSource().initialize();
-  await ds.synchronize(true);
-});
-
-afterAll(async () => {
-  const ds = getDataSource();
-  if (ds.isInitialized) {
-    await ds.destroy();
-  }
-});
-
 describe("UserController - e2e test", () => {
+  beforeAll(async () => {
+    process.env.DB_PATH = ":memory:";
+    resetDataSource();
+    const ds = await getDataSource().initialize();
+    await ds.synchronize(true);
+  });
+
   beforeEach(async () => {
     const ds = getDataSource();
     const repo = ds.getRepository(UserPersistenceEntity);
     await repo.clear();
   });
 
+  afterAll(async () => {
+    const ds = getDataSource();
+    if (ds.isInitialized) {
+      await ds.destroy();
+    }
+  });
+
   describe("POST /users", () => {
     it("creates a user and returns 201", async () => {
-      const res = await request(app)
-        .post("/users")
-        .send({
-          name: "John Doe",
-          email: "john@doe.com",
-          password: "Strong1Pass",
-        });
+      const res = await request(app).post("/users").send({
+        name: "John Doe",
+        email: "john@doe.com",
+        password: "Strong1Pass",
+      });
 
       expect(res.status).toBe(201);
       expect(res.body).toMatchObject({
@@ -43,25 +39,20 @@ describe("UserController - e2e test", () => {
         email: "john@doe.com",
       });
       expect(res.body.id).toEqual(expect.any(String));
-      createdUserId = res.body.id;
     });
 
     it("returns 500 when email already exists", async () => {
-      await request(app)
-        .post("/users")
-        .send({
-          name: "John Doe",
-          email: "john@doe.com",
-          password: "Strong1Pass",
-        });
+      await request(app).post("/users").send({
+        name: "John Doe",
+        email: "john@doe.com",
+        password: "Strong1Pass",
+      });
 
-      const res = await request(app)
-        .post("/users")
-        .send({
-          name: "Jane Doe",
-          email: "john@doe.com",
-          password: "Strong1Pass",
-        });
+      const res = await request(app).post("/users").send({
+        name: "Jane Doe",
+        email: "john@doe.com",
+        password: "Strong1Pass",
+      });
 
       expect(res.status).toBe(500);
       expect(res.body).toMatchObject({ message: "Internal Server Error" });

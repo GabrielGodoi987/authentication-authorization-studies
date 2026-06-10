@@ -1,6 +1,6 @@
 import { v4 } from "uuid";
 import { UserEntity } from "../domain/entities/user.entity";
-import { type UserRepository } from "../domain/repositorie/user.repository";
+import { type UserRepository } from "../domain/repositories/user.repository";
 import {
   FindAllUsersSpec,
   FindUserByEmailSpec,

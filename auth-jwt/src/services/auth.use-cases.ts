@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt, { SignOptions } from "jsonwebtoken";
 import { UserEntity } from "../domain/entities/user.entity";
-import { UserRepository } from "../domain/repositorie/user.repository";
+import { UserRepository } from "../domain/repositories/user.repository";
 import { FindUserByEmailSpec } from "../domain/specifications/user.specifications";
 import {
   InvalidRefreshTokenException,

@@ -1,4 +1,4 @@
-import { UserRepository } from "../../../src/domain/repositorie/user.repository";
+import { UserRepository } from "../../../src/domain/repositories/user.repository";
 import { UserRepositoryImpl } from "../../../src/infrastructure/repositories/user.repository";
 import { DeleteUserUseCase } from "../../../src/services/user.use-cases";
 

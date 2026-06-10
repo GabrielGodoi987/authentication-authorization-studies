@@ -20,9 +20,15 @@ describe("TokenProvicer class - unit test", () => {
 
     it("should generate a valid jwt refresh token", () => {
       const token = TokenProvider.generateRefreshToken({
+        id: user.getId(),
         name: user.getName(),
         email: user.getEmail(),
       });
+
+      expect(token).toEqual(expect.any(String));
+      expect(token).toMatch(
+        /^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+$/,
+      );
     });
   });
 });
