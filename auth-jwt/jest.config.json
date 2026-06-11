@@ -7,14 +7,34 @@
         "<rootDir>/test/unit/**/*.spec.ts"
       ],
       "transform": {
-        "^.+\\.ts$": "ts-jest"
+        "^.+\\.ts$": [
+          "ts-jest",
+          {
+            "diagnostics": {
+              "ignoreCodes": [151002, 2576]
+            }
+          }
+        ]
+      },
+      "moduleNameMapper": {
+        "^uuid$": "<rootDir>/__mocks__/uuid.ts"
       }
     },
     {
       "displayName": "e2e",
       "testMatch": ["<rootDir>/test/e2e/**/*.e2e.spec.ts"],
       "transform": {
-        "^.+\\.ts$": "ts-jest"
+        "^.+\\.ts$": [
+          "ts-jest",
+          {
+            "diagnostics": {
+              "ignoreCodes": [151002, 2576]
+            }
+          }
+        ]
+      },
+      "moduleNameMapper": {
+        "^uuid$": "<rootDir>/__mocks__/uuid.ts"
       }
     }
   ]

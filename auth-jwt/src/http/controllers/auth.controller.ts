@@ -185,10 +185,11 @@ export class AuthController {
     try {
       const refreshToken =
         req.body?.refreshToken ||
-        req.headers.authorization?.replace("Bearer ", "");
+        req.headers.authorization?.replace("Bearer ", "") ||
+        req.cookies?.refreshToken;
 
       if (!refreshToken) {
-        next(
+        res.json(
           new MissingTokenException({
             message: "Token is missing",
             options: {
@@ -201,6 +202,9 @@ export class AuthController {
 
       const { newAccessToken, newRefreshToken } =
         await refreshTokenUseCase.refreshToken({ refreshToken });
+
+      generateAccessTokenCookie(res, newAccessToken);
+      generateRefreshTokenCookie(res, newRefreshToken);
 
       res.status(200).json({
         newAccessToken,
@@ -218,8 +222,15 @@ export class AuthController {
       return;
     }
   }
+
+  public static logout(req: Request, res: Response) {
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+    res.status(204).end();
+  }
 }
 
+// TODO: move it to a specific file to manage it and create unit tests
 export function generateAccessTokenCookie(res: Response, accessToken: string) {
   res.cookie("accessToken", accessToken, {
     httpOnly: true,

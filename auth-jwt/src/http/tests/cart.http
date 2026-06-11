@@ -7,13 +7,13 @@
 @productId = '';
 
 ### Create a new cart
-POST {{baseUrl}}/{{userId}}
+POST {{baseUrl}}
 Content-Type: application/json
 x-api-token: {{api-token}}
 
 
 ### Get cart by user ID
-GET {{baseUrl}}/user/{{userId}}
+GET {{baseUrl}}
 Content-Type: application/json
 x-api-token: {{api-token}}
 
@@ -22,22 +22,16 @@ GET {{baseUrl}}/{{cartId}}
 Content-Type: application/json
 x-api-token: {{api-token}}
 
-## Add products to cart
+### Add product to cart
 POST {{baseUrl}}/{{cartId}}/products
 Content-Type: application/json
 x-api-token: {{api-token}}
 
 {
-  [
-    {
-      "productId": "{{productId}}",
-      "quantity": 2
-    },
-    {
-      "productId": "another-product-id",
-      "quantity": 1
-    }
-  ]
+  "productId": "{{productId}}",
+  "productName": "Product Name",
+  "quantity": 2,
+  "price": 20
 }
 
 ### Delete cart by ID

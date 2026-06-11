@@ -1,4 +1,5 @@
 import { cartSeeder } from "./cart.seed";
+import { productSeeder } from "./product.seed";
 import { seedUsers } from "./user.seed";
 
 export async function MainSeeder() {
@@ -9,6 +10,8 @@ export async function MainSeeder() {
       message,
     };
   }
+
+  await productSeeder();
 
   const messageHash: {
     fail: {
@@ -21,9 +24,20 @@ export async function MainSeeder() {
       userId: string[];
       messages: string[];
     };
-  } = {} as any;
+  } = {
+    fail: {
+      quantity: 0,
+      userId: [],
+      messages: [],
+    },
+    success: {
+      quantity: 0,
+      userId: [],
+      messages: [],
+    },
+  };
 
-  users.forEach(async (user) => {
+  for (const user of users) {
     const { message, success } = await cartSeeder({ userId: user.id });
     if (success) {
       messageHash.success.quantity++;
@@ -35,7 +49,7 @@ export async function MainSeeder() {
       messageHash.fail.userId.push(user.id);
       messageHash.fail.messages.push(message);
     }
-  });
+  }
 
   return {
     message: "Seeding process completed",

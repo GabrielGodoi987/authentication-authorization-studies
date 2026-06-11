@@ -26,9 +26,9 @@
 
 ## 🟡 Média prioridade
 
-- [ ] Implementar `src/database/seeds/product.seed.ts` (arquivo vazio)
-- [ ] Corrigir `src/database/seeds/main.ts` — `messageHash` inicializado como `{}` causa `TypeError`
-- [ ] Sincronizar `src/database/seeds/main.ts` com `product.seed.ts` (seeds de produtos não são executadas)
+- [ x ] Implementar `src/database/seeds/product.seed.ts` (arquivo vazio)
+- [ x ] Corrigir `src/database/seeds/main.ts` — `messageHash` inicializado como `{}` causa `TypeError`
+- [ x ] Sincronizar `src/database/seeds/main.ts` com `product.seed.ts` (seeds de produtos não são executadas)
 
 ## 🔵 Baixa prioridade
 

@@ -1,4 +1,5 @@
 import CookieParser from "cookie-parser";
+import cors from "cors";
 import express, { Request, Response } from "express";
 import "reflect-metadata";
 import { buildSwaggerSpec, swaggerUi } from "./docs/swagger";
@@ -25,6 +26,7 @@ const swaggerSpec = buildSwaggerSpec({
 
 app.use(express.json());
 app.use(CookieParser());
+app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
 
 const apiTokenMiddleware = new ApiTokenMiddleware();
 const cartMiddleware = new CartMiddleware();

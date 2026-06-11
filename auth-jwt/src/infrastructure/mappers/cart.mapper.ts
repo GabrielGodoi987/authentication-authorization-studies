@@ -4,7 +4,7 @@ import { CartItemsPersistenceEntity } from "../persistence/cart-items-persistenc
 import { CartPersistenceEntity } from "../persistence/cart-persistence.entity";
 
 export class CartMapper {
-  toDomain(persistence: CartPersistenceEntity): CartEntity {
+  public static toDomain(persistence: CartPersistenceEntity): CartEntity {
     const cart = new CartEntity(persistence.id, persistence.userId);
     if (persistence.cartItems) {
       const products = persistence.cartItems.map((ci) =>
@@ -15,7 +15,9 @@ export class CartMapper {
     return cart;
   }
 
-  toPersistence(cart: CartEntity): Partial<CartPersistenceEntity> {
+  public static toPersistence(
+    cart: CartEntity,
+  ): Partial<CartPersistenceEntity> {
     return {
       id: cart.getId(),
       userId: cart.getUserId(),
@@ -23,7 +25,7 @@ export class CartMapper {
     };
   }
 
-  cartProductToDomain(
+  public static cartProductToDomain(
     persistence: CartItemsPersistenceEntity,
   ): CartItemsEntity {
     return new CartItemsEntity(
@@ -35,7 +37,7 @@ export class CartMapper {
     );
   }
 
-  cartProductToPersistence(
+  public static cartProductToPersistence(
     domain: CartItemsEntity,
   ): Partial<CartItemsPersistenceEntity> {
     return {
