@@ -38,7 +38,7 @@ describe("cartSeeder", () => {
     (getDataSource as jest.Mock).mockReturnValue(mockDataSource);
   });
 
-  it("creates carts using existing products", async () => {
+  it("should create carts using existing products", async () => {
     const existingProducts = [
       { id: "prod-1", name: "Product A", price: 10 },
       { id: "prod-2", name: "Product B", price: 20 },
@@ -56,7 +56,7 @@ describe("cartSeeder", () => {
     expect(result.message).toContain("Seeded 2 carts");
   });
 
-  it("creates fallback products when none exist", async () => {
+  it("should create fallback products when none exist", async () => {
     mockProductRepo.find.mockResolvedValue([]);
     mockProductRepo.create.mockImplementation((data: any) => data);
     mockProductRepo.save.mockImplementation((products: any) => products);
@@ -70,7 +70,7 @@ describe("cartSeeder", () => {
     expect(mockProductRepo.save).toHaveBeenCalled();
   });
 
-  it("handles errors gracefully", async () => {
+  it("should handle errors gracefully", async () => {
     mockProductRepo.find.mockRejectedValue(new Error("Connection failed"));
 
     const result = await cartSeeder({ userId });

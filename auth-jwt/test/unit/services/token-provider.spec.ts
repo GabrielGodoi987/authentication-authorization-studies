@@ -1,6 +1,6 @@
-import { v4 } from "uuid";
 import { UserEntity } from "../../../src/domain/entities/user.entity";
 import { TokenProvider } from "../../../src/services/auth.use-cases";
+import { v4 } from "../../__mocks__/uuid";
 import { context } from "../../helpers/context";
 
 describe("TokenProvicer class - unit test", () => {

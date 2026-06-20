@@ -10,7 +10,7 @@ describe("processEnv", () => {
     process.env = OLD_ENV;
   });
 
-  it("loads JWT environment variables", () => {
+  it("should load JWT environment variables", () => {
     process.env.JWT_SECRET = "test-secret";
     process.env.JWT_ACCESS_TOKEN_EXPIRESIN = "15m";
     process.env.JWT_REFRESH_TOKEN_EXPIRESIN = "7d";
@@ -26,7 +26,7 @@ describe("processEnv", () => {
     expect(processEnv.NODE_ENV).toBe("test");
   });
 
-  it("replaces \\n with actual newlines in keys", () => {
+  it("should replace \\n with actual newlines in keys", () => {
     process.env.JWT_SECRET = "secret";
     process.env.JWT_ACCESS_TOKEN_EXPIRESIN = "15m";
     process.env.JWT_REFRESH_TOKEN_EXPIRESIN = "7d";

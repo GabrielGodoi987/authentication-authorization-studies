@@ -25,7 +25,7 @@ describe("MainSeeder", () => {
     jest.clearAllMocks();
   });
 
-  it("calls seedUsers, productSeeder, and cartSeeder for each user", async () => {
+  it("should call seedUsers, productSeeder, and cartSeeder for each user", async () => {
     (seedUsers as jest.Mock).mockResolvedValue({
       message: "Seeded 2 users",
       users: mockUsers,
@@ -42,7 +42,7 @@ describe("MainSeeder", () => {
     expect(cartSeeder).toHaveBeenCalledWith({ userId: "user-2" });
   });
 
-  it("stops early when seedUsers returns no users", async () => {
+  it("should stop early when seedUsers returns no users", async () => {
     (seedUsers as jest.Mock).mockResolvedValue({
       message: "No users",
       users: undefined,
@@ -55,7 +55,7 @@ describe("MainSeeder", () => {
     expect(result.message).toBe("No users");
   });
 
-  it("aggregates success results", async () => {
+  it("should aggregate success results", async () => {
     (seedUsers as jest.Mock).mockResolvedValue({
       message: "Seeded 2 users",
       users: mockUsers,
@@ -74,7 +74,7 @@ describe("MainSeeder", () => {
     ]);
   });
 
-  it("aggregates failure results", async () => {
+  it("should aggregate failure results", async () => {
     (seedUsers as jest.Mock).mockResolvedValue({
       message: "Seeded 2 users",
       users: mockUsers,

@@ -23,14 +23,14 @@ describe("main", () => {
     jest.clearAllMocks();
   });
 
-  it("calls MainSeeder on startup", async () => {
+  it("should call MainSeeder on startup", async () => {
     const { main } = await import("../../../src/webserver/server");
     const { MainSeeder } = require("../../../src/database/seeds/main");
     await main();
     expect(MainSeeder).toHaveBeenCalledTimes(1);
   });
 
-  it("starts the server on port 3000 by default", async () => {
+  it("should start the server on port 3000 by default", async () => {
     jest.resetModules();
     const { main } = await import("../../../src/webserver/server");
     const { app } = require("../../../src/app");
@@ -39,7 +39,7 @@ describe("main", () => {
     expect(app.listen).toHaveBeenCalledWith(3000, expect.any(Function));
   });
 
-  it("uses PORT environment variable when set", async () => {
+  it("should use PORT environment variable when set", async () => {
     process.env.PORT = "4000";
     jest.resetModules();
     const { main } = await import("../../../src/webserver/server");

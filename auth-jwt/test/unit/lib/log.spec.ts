@@ -1,4 +1,9 @@
-import { LogTracker } from "../../../src/lib/log";
+let LogTracker: typeof import("../../../src/lib/log").LogTracker;
+
+async function reloadLogTracker() {
+  jest.resetModules();
+  ({ LogTracker } = await import("../../../src/lib/log"));
+}
 
 describe("LogTracker", () => {
   let debugSpy: jest.SpyInstance;
@@ -6,9 +11,10 @@ describe("LogTracker", () => {
   let warnSpy: jest.SpyInstance;
   let errorSpy: jest.SpyInstance;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     process.env.LOG_LEVEL = "debug";
-    jest.resetModules();
+    process.env.NODE_ENV = "test";
+    await reloadLogTracker();
 
     debugSpy = jest.spyOn(console, "debug").mockImplementation();
     infoSpy = jest.spyOn(console, "info").mockImplementation();
@@ -28,7 +34,7 @@ describe("LogTracker", () => {
       { level: "warn", message: "warn message", spyKey: "warnSpy" },
       { level: "error", message: "error message", spyKey: "errorSpy" },
     ])(
-      "$level calls the right console method",
+      "should call the right console method for $level",
       ({ level, message, spyKey }) => {
         const spy =
           spyKey === "debugSpy"
@@ -48,14 +54,14 @@ describe("LogTracker", () => {
   });
 
   describe("metadata and errors", () => {
-    it("includes metadata in the output", () => {
+    it("should include metadata in the output", () => {
       LogTracker.info("with meta", { userId: "123", role: "admin" });
       expect(infoSpy).toHaveBeenCalledWith(
         expect.stringContaining('{"userId":"123","role":"admin"}'),
       );
     });
 
-    it("includes error stack in warn", () => {
+    it("should include error stack in warn", () => {
       const error = new Error("something went wrong");
       LogTracker.warn("warning with error", error);
       expect(warnSpy).toHaveBeenCalledWith(
@@ -63,7 +69,7 @@ describe("LogTracker", () => {
       );
     });
 
-    it("includes error stack in error", () => {
+    it("should include error stack in error", () => {
       const error = new Error("something went wrong");
       LogTracker.error("error with error", error);
       expect(errorSpy).toHaveBeenCalledWith(
@@ -71,7 +77,7 @@ describe("LogTracker", () => {
       );
     });
 
-    it("includes error and meta together", () => {
+    it("should include error and meta together", () => {
       const error = new Error("fail");
       LogTracker.error("context", error, { key: "value" });
       expect(errorSpy).toHaveBeenCalledWith(
@@ -84,7 +90,7 @@ describe("LogTracker", () => {
   });
 
   describe("caller info", () => {
-    it("includes file:line of the caller", () => {
+    it("should include file:line of the caller", () => {
       LogTracker.info("check caller");
       const output = infoSpy.mock.calls[0][0] as string;
       expect(output).toMatch(/test\/unit\/lib\/log\.spec\.ts:\d+/);
@@ -92,28 +98,30 @@ describe("LogTracker", () => {
   });
 
   describe("level filtering", () => {
-    beforeEach(() => {
-      jest.resetModules();
-    });
-
-    it("skips debug when LOG_LEVEL=info", () => {
+    it("should skip debug when LOG_LEVEL=info", async () => {
       process.env.LOG_LEVEL = "info";
+      await reloadLogTracker();
+
       LogTracker.debug("should not appear");
       LogTracker.info("should appear");
       expect(console.debug).not.toHaveBeenCalled();
       expect(console.info).toHaveBeenCalledTimes(1);
     });
 
-    it("skips info when LOG_LEVEL=warn", () => {
+    it("should skip info when LOG_LEVEL=warn", async () => {
       process.env.LOG_LEVEL = "warn";
+      await reloadLogTracker();
+
       LogTracker.info("should not appear");
       LogTracker.warn("should appear");
       expect(console.info).not.toHaveBeenCalled();
       expect(console.warn).toHaveBeenCalledTimes(1);
     });
 
-    it("logs everything when LOG_LEVEL=debug", () => {
+    it("should log everything when LOG_LEVEL=debug", async () => {
       process.env.LOG_LEVEL = "debug";
+      await reloadLogTracker();
+
       LogTracker.debug("debug");
       LogTracker.info("info");
       LogTracker.warn("warn");
@@ -126,16 +134,16 @@ describe("LogTracker", () => {
   });
 
   describe("production mode", () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       process.env.NODE_ENV = "production";
-      jest.resetModules();
+      await reloadLogTracker();
     });
 
     afterEach(() => {
       process.env.NODE_ENV = "test";
     });
 
-    it("outputs JSON in production", () => {
+    it("should output JSON in production", () => {
       LogTracker.info("prod log", { env: "prod" });
       const output = (console.info as jest.Mock).mock.calls[0][0];
       const parsed = JSON.parse(output);
@@ -147,7 +155,7 @@ describe("LogTracker", () => {
       expect(parsed).toHaveProperty("timestamp");
     });
 
-    it("includes only error message (not stack) in JSON", () => {
+    it("should include only error message (not stack) in JSON", () => {
       const error = new Error("secret details");
       LogTracker.error("oops", error);
       const output = (console.error as jest.Mock).mock.calls[0][0];

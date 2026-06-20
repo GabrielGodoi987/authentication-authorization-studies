@@ -38,7 +38,7 @@ describe("UserMapper - unit test", () => {
   });
 
   describe("toDomain", () => {
-    it("maps a persistence user to a domain user", () => {
+    it("should map a persistence user to a domain user", () => {
       const persistence = makePersistence();
       const domain = mapper.toDomain(persistence);
 
@@ -50,7 +50,7 @@ describe("UserMapper - unit test", () => {
   });
 
   describe("toPersistence", () => {
-    it('maps a domain entity to a persistence entity with "id" field', () => {
+    it('should map a domain entity to a persistence entity with "id" field', () => {
       const domain = makeDomain();
       const persistence = mapper.toPersistence({
         getId: () => "abc-123",
@@ -65,7 +65,7 @@ describe("UserMapper - unit test", () => {
       expect(typeof persistence.password).toBe("string");
     });
 
-    it('maps a domain entity to a persistence entity without "id" field', () => {
+    it('should map a domain entity to a persistence entity without "id" field', () => {
       const domain = makeDomain();
       const persistence = mapper.toPersistence({
         getName: domain.getName.bind(domain),

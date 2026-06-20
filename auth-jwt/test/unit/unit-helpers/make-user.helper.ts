@@ -1,5 +1,5 @@
-import { v4 } from "uuid";
 import { UserEntity } from "../../../src/domain/entities/user.entity";
+import { v4 } from "../../__mocks__/uuid";
 
 const STRONG_PASSWORD = "Strong1Pass";
 

@@ -14,7 +14,7 @@ describe("CreateUserUseCase - unit test", () => {
     useCase = new CreateUserUseCase(repo as unknown as UserRepository);
   });
 
-  it("creates a user when email does not exist", async () => {
+  it("should create a user when email does not exist", async () => {
     const user = makeUser();
     repo.findOne.mockResolvedValue(null);
     repo.save.mockResolvedValue(user);
@@ -41,7 +41,7 @@ describe("CreateUserUseCase - unit test", () => {
     expect(result.toJSON().id).toEqual(expect.any(String));
   });
 
-  it("throws when email already exists", async () => {
+  it("should throw when email already exists", async () => {
     repo.findOne.mockResolvedValue(makeUser());
 
     await expect(

@@ -18,7 +18,7 @@ describe("FindUserByIdUseCase", () => {
     useCase = new FindUserByIdUseCase(repo as unknown as UserRepository);
   });
 
-  it("returns a user when found", async () => {
+  it("should return a user when found", async () => {
     const user = makeUser();
     repo.findOne.mockResolvedValue(user);
 
@@ -28,7 +28,7 @@ describe("FindUserByIdUseCase", () => {
     expect(result).toBe(user);
   });
 
-  it("returns null when not found", async () => {
+  it("should return null when not found", async () => {
     repo.findOne.mockResolvedValue(null);
 
     expect(async () => await useCase.execute("nonexistent-id")).rejects.toThrow(
@@ -46,7 +46,7 @@ describe("FindUserByEmailUseCase", () => {
     useCase = new FindUserByEmailUseCase(repo as unknown as UserRepository);
   });
 
-  it("returns a user when found", async () => {
+  it("should return a user when found", async () => {
     const user = makeUser();
     repo.findOne.mockResolvedValue(user);
 
@@ -56,7 +56,7 @@ describe("FindUserByEmailUseCase", () => {
     expect(result).toBe(user);
   });
 
-  it("returns null when not found", async () => {
+  it("should return null when not found", async () => {
     repo.findOne.mockResolvedValue(null);
 
     expect(
@@ -74,7 +74,7 @@ describe("FindAllUsersUseCase", () => {
     useCase = new FindAllUsersUseCase(repo as unknown as UserRepository);
   });
 
-  it("returns all users", async () => {
+  it("should return all users", async () => {
     const users = [makeUser(), makeUser({ name: "Another User" })];
     repo.find.mockResolvedValue(users);
 
@@ -85,7 +85,7 @@ describe("FindAllUsersUseCase", () => {
     expect(result).toBe(users);
   });
 
-  it("returns empty array when no users", async () => {
+  it("should return empty array when no users", async () => {
     repo.find.mockResolvedValue([]);
 
     const result = await useCase.execute();

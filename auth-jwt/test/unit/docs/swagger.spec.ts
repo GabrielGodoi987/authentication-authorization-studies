@@ -10,7 +10,7 @@ describe("buildSwaggerSpec", () => {
     },
   };
 
-  it("returns a valid OpenAPI 3.0 spec with default metadata", () => {
+  it("should return a valid OpenAPI 3.0 spec with default metadata", () => {
     const spec = buildSwaggerSpec({ controllers: [mockController] });
 
     expect(spec.openapi).toBe("3.0.0");
@@ -19,7 +19,7 @@ describe("buildSwaggerSpec", () => {
     expect(spec.servers).toEqual([{ url: "/", description: "Local server" }]);
   });
 
-  it("merges paths from all controllers", () => {
+  it("should merge paths from all controllers", () => {
     const controller2 = {
       tag: { name: "Test2", description: "Another controller" },
       paths: {
@@ -36,13 +36,13 @@ describe("buildSwaggerSpec", () => {
     expect(Object.keys(spec.paths)).toHaveLength(2);
   });
 
-  it("collects tags from controllers", () => {
+  it("should collect tags from controllers", () => {
     const spec = buildSwaggerSpec({ controllers: [mockController] });
 
     expect(spec.tags).toEqual([{ name: "Test", description: "Test controller" }]);
   });
 
-  it("includes bearerAuth and apiKey security schemes", () => {
+  it("should include bearerAuth and apiKey security schemes", () => {
     const spec = buildSwaggerSpec({ controllers: [mockController] });
 
     expect(spec.components.securitySchemes.bearerAuth).toEqual({
@@ -59,20 +59,20 @@ describe("buildSwaggerSpec", () => {
     });
   });
 
-  it("includes default security requirement with bearerAuth", () => {
+  it("should include default security requirement with bearerAuth", () => {
     const spec = buildSwaggerSpec({ controllers: [mockController] });
 
     expect(spec.security).toEqual([{ bearerAuth: [] }]);
   });
 
-  it("includes custom schemas when provided", () => {
+  it("should include custom schemas when provided", () => {
     const schemas = { User: { type: "object", properties: { name: { type: "string" } } } };
     const spec = buildSwaggerSpec({ controllers: [mockController], schemas });
 
     expect(spec.components.schemas).toEqual(schemas);
   });
 
-  it("defaults schemas to empty object when not provided", () => {
+  it("should default schemas to empty object when not provided", () => {
     const spec = buildSwaggerSpec({ controllers: [mockController] });
 
     expect(spec.components.schemas).toEqual({});

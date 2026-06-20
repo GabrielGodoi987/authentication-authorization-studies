@@ -31,12 +31,12 @@ afterAll(async () => {
 describe("CreateTableUsers migration", () => {
   const migration = new CreateTableUsersf47ac10b58cc4372a5670e02b2c3d479();
 
-  it("creates the users table on up()", async () => {
+  it("should create the users table on up()", async () => {
     await migration.up(queryRunner);
     expect(await tableExists(queryRunner, "users")).toBe(true);
   });
 
-  it("drops the users table on down()", async () => {
+  it("should drop the users table on down()", async () => {
     await migration.down(queryRunner);
     expect(await tableExists(queryRunner, "users")).toBe(false);
   });
@@ -53,7 +53,7 @@ describe("CreateTableProducts migration", () => {
     await migration.down(queryRunner);
   });
 
-  it("creates the products table on up()", async () => {
+  it("should create the products table on up()", async () => {
     expect(await tableExists(queryRunner, "products")).toBe(true);
   });
 });
@@ -71,7 +71,7 @@ describe("CreateTableCart migration (depends on users table)", () => {
     await userMigration.down(queryRunner);
   });
 
-  it("creates the carts table on up() with FK referencing users", async () => {
+  it("should create the carts table on up() with FK referencing users", async () => {
     await cartMigration.up(queryRunner);
     expect(await tableExists(queryRunner, "carts")).toBe(true);
   });
@@ -96,12 +96,12 @@ describe("CreateTableCartItems migration (depends on carts and products)", () =>
     await userMigration.down(queryRunner);
   });
 
-  it("creates the cart_items table on up()", async () => {
+  it("should create the cart_items table on up()", async () => {
     await cartItemsMigration.up(queryRunner);
     expect(await tableExists(queryRunner, "cart_items")).toBe(true);
   });
 
-  it("has the expected columns in cart_items", async () => {
+  it("should have the expected columns in cart_items", async () => {
     const columns = await queryRunner.query("PRAGMA table_info(cart_items)");
     const columnNames = columns.map((c: any) => c.name);
     expect(columnNames).toEqual(

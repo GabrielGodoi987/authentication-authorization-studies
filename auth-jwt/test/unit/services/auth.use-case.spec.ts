@@ -23,7 +23,7 @@ describe("AuthUseCase - unit test", () => {
     jest.clearAllMocks();
   });
 
-  it("returns user and token when credentials are valid", async () => {
+  it("should return user and token when credentials are valid", async () => {
     const user = makeUser();
     jest.spyOn(UserRepositoryImpl.prototype, "findOne").mockResolvedValue(user);
     (bcrypt.compare as jest.Mock) = jest.fn().mockResolvedValue(true);
@@ -76,7 +76,7 @@ describe("AuthUseCase - unit test", () => {
     expect(refreshTokenSpy).not.toHaveBeenCalled();
   });
 
-  it("throws when user is not found", async () => {
+  it("should throw when user is not found", async () => {
     jest.spyOn(UserRepositoryImpl.prototype, "findOne").mockResolvedValue(null);
     jest.spyOn(console, "error").mockReturnValue();
 

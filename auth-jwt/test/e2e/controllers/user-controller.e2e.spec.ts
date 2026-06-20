@@ -26,7 +26,7 @@ describe("UserController - e2e test", () => {
   });
 
   describe("POST /users", () => {
-    it("creates a user and returns 201", async () => {
+    it("should create a user and return 201", async () => {
       const res = await request(app).post("/users").send({
         name: "John Doe",
         email: "john@doe.com",
@@ -41,7 +41,7 @@ describe("UserController - e2e test", () => {
       expect(res.body.id).toEqual(expect.any(String));
     });
 
-    it("returns 500 when email already exists", async () => {
+    it("should return 500 when email already exists", async () => {
       await request(app).post("/users").send({
         name: "John Doe",
         email: "john@doe.com",
@@ -58,7 +58,7 @@ describe("UserController - e2e test", () => {
       expect(res.body).toMatchObject({ message: "Internal Server Error" });
     });
 
-    it("returns 500 when password is invalid", async () => {
+    it("should return 500 when password is invalid", async () => {
       const res = await request(app)
         .post("/users")
         .send({ name: "John Doe", email: "john@doe.com", password: "123" });
@@ -72,7 +72,7 @@ describe("UserController - e2e test", () => {
       await seedUsers();
     });
 
-    it("returns all users", async () => {
+    it("should return all users", async () => {
       const res = await request(app).get("/users");
 
       expect(res.status).toBe(200);
@@ -85,7 +85,7 @@ describe("UserController - e2e test", () => {
       expect(res.body[0].id).toEqual(expect.any(String));
     });
 
-    it("does not expose passwords", async () => {
+    it("should not expose passwords", async () => {
       const res = await request(app).get("/users");
       for (const user of res.body) {
         expect(user.password).toBeUndefined();
@@ -98,7 +98,7 @@ describe("UserController - e2e test", () => {
       await seedUsers();
     });
 
-    it("returns a user by id", async () => {
+    it("should return a user by id", async () => {
       const all = await request(app).get("/users");
       const id = all.body[0].id;
 
@@ -112,7 +112,7 @@ describe("UserController - e2e test", () => {
       });
     });
 
-    it("returns 404 when user not found", async () => {
+    it("should return 404 when user not found", async () => {
       const res = await request(app).get("/users/nonexistent-id");
 
       expect(res.status).toBe(404);
@@ -125,7 +125,7 @@ describe("UserController - e2e test", () => {
       await seedUsers();
     });
 
-    it("returns a user by email", async () => {
+    it("should return a user by email", async () => {
       const res = await request(app).get(
         "/users/search?email=user1@example.com",
       );
@@ -137,7 +137,7 @@ describe("UserController - e2e test", () => {
       });
     });
 
-    it("returns 404 when email not found", async () => {
+    it("should return 404 when email not found", async () => {
       const res = await request(app).get(
         "/users/search?email=unknown@test.com",
       );
@@ -146,7 +146,7 @@ describe("UserController - e2e test", () => {
       expect(res.body).toMatchObject({ message: "User not found" });
     });
 
-    it("returns 400 when email param is missing", async () => {
+    it("should return 400 when email param is missing", async () => {
       const res = await request(app).get("/users/search");
 
       expect(res.status).toBe(400);
@@ -161,7 +161,7 @@ describe("UserController - e2e test", () => {
       await seedUsers();
     });
 
-    it("updates a user and returns 200", async () => {
+    it("should update a user and return 200", async () => {
       const all = await request(app).get("/users");
       const id = all.body[0].id;
 
@@ -177,7 +177,7 @@ describe("UserController - e2e test", () => {
       });
     });
 
-    it("returns 404 when user not found", async () => {
+    it("should return 404 when user not found", async () => {
       const res = await request(app)
         .put("/users/nonexistent-id")
         .send({ name: "Updated" });
@@ -192,7 +192,7 @@ describe("UserController - e2e test", () => {
       await seedUsers();
     });
 
-    it("deletes a user and returns 204", async () => {
+    it("should delete a user and return 204", async () => {
       const all = await request(app).get("/users");
       const id = all.body[0].id;
 
@@ -201,7 +201,7 @@ describe("UserController - e2e test", () => {
       expect(res.status).toBe(204);
     });
 
-    it("returns 404 when user not found", async () => {
+    it("should return 404 when user not found", async () => {
       const res = await request(app).delete("/users/nonexistent-id");
 
       expect(res.status).toBe(404);

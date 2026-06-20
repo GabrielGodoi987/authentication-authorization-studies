@@ -1,5 +1,5 @@
-import { EmailValueObject } from "../value-objects/email.value-objects";
-import { PasswordValueObject } from "../value-objects/password.value-objects";
+import { EmailValueObject } from "../value-objects/email.value-object";
+import { PasswordValueObject } from "../value-objects/password.value-object";
 
 export class UserEntity {
   private id: string;

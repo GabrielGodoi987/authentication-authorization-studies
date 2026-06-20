@@ -1,7 +1,7 @@
 import { SwaggerController, SwaggerSpecOptions } from "../../../src/docs/types";
 
 describe("Swagger types", () => {
-  it("SwaggerController interface shape is usable at runtime", () => {
+  it("should validate SwaggerController interface shape at runtime", () => {
     const controller: SwaggerController = {
       tag: { name: "Test", description: "Test controller" },
       paths: {
@@ -16,7 +16,7 @@ describe("Swagger types", () => {
     expect(controller.paths["/test"].get.summary).toBe("Test endpoint");
   });
 
-  it("SwaggerSpecOptions interface shape is usable at runtime", () => {
+  it("should validate SwaggerSpecOptions interface shape at runtime", () => {
     const options: SwaggerSpecOptions = {
       controllers: [],
       schemas: { User: { type: "object" } },
@@ -26,7 +26,7 @@ describe("Swagger types", () => {
     expect(options.schemas).toEqual({ User: { type: "object" } });
   });
 
-  it("SwaggerSpecOptions schemas is optional and defaults gracefully", () => {
+  it("should make schemas optional and default gracefully", () => {
     const options: SwaggerSpecOptions = {
       controllers: [],
     };

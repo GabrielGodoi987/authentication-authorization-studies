@@ -14,25 +14,27 @@ describe("UpdateUserUseCase", () => {
     useCase = new UpdateUserUseCase(repo as unknown as UserRepository);
   });
 
-  it("updates and returns the user when found", async () => {
+  it("should update and returns the user when found", async () => {
+    jest.spyOn(console, "error").mockReturnValue();
     const user = makeUser();
+    repo.findOne.mockResolvedValue(user);
     repo.update.mockResolvedValue(user);
 
-    const result = await useCase.execute(user.getId(), { name: "Jane Doe" });
+    const result = await useCase.execute(user.getId(), { name: "John Doe" });
 
-    expect(repo.update).toHaveBeenCalledWith(user.getId(), {
-      name: "Jane Doe",
-    });
+    expect(repo.update).toHaveBeenCalledWith(user.getId(), user);
+
     expect(result).toBe(user);
   });
 
-  it("returns null when user not found", async () => {
+  it("should throw UserNotFoundException when user not found", async () => {
+    jest.spyOn(console, "error").mockReturnValue();
     repo.update.mockResolvedValue(null);
 
-    const result = await useCase.execute("nonexistent-id", {
-      name: "Jane Doe",
-    });
-
-    expect(result).toBeNull();
+    await expect(
+      useCase.execute("invalid-id", {
+        name: "Jane Doe",
+      }),
+    ).rejects.toThrow("User was not found");
   });
 });

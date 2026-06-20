@@ -29,7 +29,7 @@ describe("seedUsers", () => {
     (getDataSource as jest.Mock).mockReturnValue(mockDataSource);
   });
 
-  it("skips seeding when users already exist", async () => {
+  it("should skip seeding when users already exist", async () => {
     mockRepo.count.mockResolvedValue(5);
 
     const result = await seedUsers();
@@ -39,7 +39,7 @@ describe("seedUsers", () => {
     expect(mockRepo.save).not.toHaveBeenCalled();
   });
 
-  it("creates users when database is empty", async () => {
+  it("should create users when database is empty", async () => {
     mockRepo.count.mockResolvedValue(0);
     mockRepo.save.mockImplementation((users: any[]) => users);
 
@@ -51,7 +51,7 @@ describe("seedUsers", () => {
     expect(bcrypt.hashSync).toHaveBeenCalled();
   });
 
-  it("creates the specific Gabriel user", async () => {
+  it("should create the specific Gabriel user", async () => {
     mockRepo.count.mockResolvedValue(0);
     mockRepo.save.mockImplementation((users: any[]) => users);
 
@@ -63,7 +63,7 @@ describe("seedUsers", () => {
     expect(gabriel).toBeDefined();
   });
 
-  it("returns an error message when save fails", async () => {
+  it("should return an error message when save fails", async () => {
     mockRepo.count.mockResolvedValue(0);
     mockRepo.save.mockRejectedValue(new Error("DB connection lost"));
 

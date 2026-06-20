@@ -2,9 +2,12 @@ export class EmailValueObject {
   private readonly email: string;
 
   constructor(email: string) {
-    if (!this.validateEmail(email)) {
+    const isValidEmail = this.validateEmail(email);
+
+    if (!isValidEmail) {
       throw new Error("Invalid email format");
     }
+
     this.email = email;
   }
 

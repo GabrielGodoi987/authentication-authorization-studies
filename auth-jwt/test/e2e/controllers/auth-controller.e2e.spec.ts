@@ -25,7 +25,7 @@ describe("AuthController - e2e test", () => {
       await repo.clear();
     });
 
-    it("returns 200 and a token when credentials are valid", async () => {
+    it("should return 200 and a token when credentials are valid", async () => {
       await request(app)
         .post("/users")
         .send({ name: "John Doe", email: "john@doe.com", password: "Strong1Pass" })
@@ -40,7 +40,7 @@ describe("AuthController - e2e test", () => {
       expect(res.body.token).toEqual(expect.any(String));
     });
 
-    it("returns 500 when email does not exist", async () => {
+    it("should return 500 when email does not exist", async () => {
       const res = await request(app)
         .post("/auth/login")
         .send({ email: "unknown@doe.com", password: "Strong1Pass" });
@@ -48,7 +48,7 @@ describe("AuthController - e2e test", () => {
       expect(res.status).toBe(500);
     });
 
-    it("returns 500 when password is wrong", async () => {
+    it("should return 500 when password is wrong", async () => {
       await request(app)
         .post("/users")
         .send({ name: "John Doe", email: "john@doe.com", password: "Strong1Pass" })

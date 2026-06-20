@@ -78,32 +78,22 @@ export class UpdateUserUseCase {
   constructor(private readonly userRepo: UserRepository) {}
 
   async execute(id: string, data: UpdateUserDto): Promise<UserEntity | null> {
-    try {
-      const user = await this.verifyIfUserExists(id);
-
-      const updatedUser = new UserEntity(
-        user.getId(),
-        data.name ?? user.getName(),
-        data.email ?? user.getEmail(),
-        data.password ?? user.getPassword(),
-      );
-
-      return this.userRepo.update(id, updatedUser);
-    } catch (error: any) {
-      console.error(error);
-      return error.message;
-    }
-  }
-
-  private async verifyIfUserExists(id: string) {
     const user = await this.userRepo.findOne(new FindUserByIdSpec(id));
+
     if (!user) {
       throw new UserNotFoundException({
         message: "User was not found",
       });
     }
 
-    return user;
+    const updatedUser = new UserEntity(
+      user.getId(),
+      data.name ?? user.getName(),
+      data.email ?? user.getEmail(),
+      data.password ?? user.getPassword(),
+    );
+
+    return this.userRepo.update(id, updatedUser);
   }
 }
 
@@ -111,16 +101,14 @@ export class DeleteUserUseCase {
   constructor(private readonly userRepo: UserRepository) {}
 
   async execute(id: string): Promise<boolean> {
-    await this.verifyIfUserExists(id);
-    return this.userRepo.delete(id);
-  }
-
-  private async verifyIfUserExists(id: string) {
     const user = await this.userRepo.findOne(new FindUserByIdSpec(id));
+
     if (!user) {
       throw new UserNotFoundException({
         message: "User was not found",
       });
     }
+
+    return this.userRepo.delete(id);
   }
 }
