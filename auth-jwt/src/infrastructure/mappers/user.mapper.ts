@@ -3,7 +3,7 @@ import { UserPersistenceEntity } from "../persistence/user-persistence.entity";
 
 export class UserMapper {
   toDomain(persistence: UserPersistenceEntity): UserEntity {
-    return UserEntity.fromPersistence(
+    return new UserEntity(
       persistence.id,
       persistence.name,
       persistence.email,

@@ -1,25 +1,17 @@
 import { EmailValueObject } from "../value-objects/email.value-objects";
+import { PasswordValueObject } from "../value-objects/password.value-objects";
 
 export class UserEntity {
   private id: string;
   private name: string;
   private email: EmailValueObject;
-  private password: string;
+  private password: PasswordValueObject;
 
   constructor(id: string, name: string, email: string, password: string) {
     this.id = id;
     this.name = name;
     this.email = new EmailValueObject(email);
-    this.password = password;
-  }
-
-  static fromPersistence(
-    id: string,
-    name: string,
-    email: string,
-    password: string,
-  ): UserEntity {
-    return new UserEntity(id, name, email, password);
+    this.password = new PasswordValueObject(password);
   }
 
   getId(): string {
@@ -35,7 +27,7 @@ export class UserEntity {
   }
 
   getPassword(): string {
-    return this.password;
+    return this.password.getPassword();
   }
 
   toJSON() {

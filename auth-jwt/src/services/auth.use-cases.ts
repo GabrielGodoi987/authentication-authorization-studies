@@ -97,9 +97,14 @@ export class AuthUseCase {
         });
       }
 
-      if (!bcrypt.compare(password, user.getPassword())) {
+      const isValidPassword = await bcrypt.compare(
+        password,
+        user.getPassword(),
+      );
+
+      if (!isValidPassword) {
         throw new InvalidCredentialsExceptions({
-          message: "Credential erro",
+          message: "Credential error",
         });
       }
 
@@ -117,7 +122,7 @@ export class AuthUseCase {
 
       return { user, accessToken, refreshToken };
     } catch (error: any) {
-      console.log(error);
+      console.error(error);
       throw new InvalidTokenException({
         message: error.message,
         options: {

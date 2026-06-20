@@ -1,7 +1,8 @@
 import { config } from "dotenv";
 
 config({
-  debug: true,
+  debug: process.env.DOTENV_DEBUG === "true",
+  quiet: process.env.NODE_ENV === "test",
 });
 
 export const processEnv = {

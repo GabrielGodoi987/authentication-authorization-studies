@@ -8,12 +8,6 @@ import { CartItemsPersistenceEntity } from "../persistence/cart-items-persistenc
 import { CartPersistenceEntity } from "../persistence/cart-persistence.entity";
 
 export class CartRepositoryImpl implements CartRepository {
-  private mapper: CartMapper;
-
-  constructor() {
-    this.mapper = new CartMapper();
-  }
-
   private getCartRepo() {
     return AppDataSource.getRepository(CartPersistenceEntity);
   }
@@ -24,20 +18,21 @@ export class CartRepositoryImpl implements CartRepository {
 
   async save(cart: CartEntity): Promise<CartEntity> {
     const repo = this.getCartRepo();
-    const data = this.mapper.toPersistence(cart);
+    const data = CartMapper.toPersistence(cart);
     const model = repo.create(data);
     const saved = await repo.save(model);
-    return this.mapper.toDomain(saved);
+    return CartMapper.toDomain(saved);
   }
 
   async findOne(
     spec: WhereSpecification<CartPersistenceEntity>,
   ): Promise<CartEntity | null> {
     const model = await this.getCartRepo().findOne({
-      where: spec.toWhere() as any,
+      where: spec.toWhere(),
       relations: ["cartProducts"],
     });
-    return model ? this.mapper.toDomain(model) : null;
+
+    return model ? CartMapper.toDomain(model) : null;
   }
 
   async find(
@@ -47,7 +42,7 @@ export class CartRepositoryImpl implements CartRepository {
       where: spec.toWhere() as any,
       relations: ["cartProducts"],
     });
-    return models.map((m) => this.mapper.toDomain(m));
+    return models.map((m) => CartMapper.toDomain(m));
   }
 
   async delete(id: string): Promise<boolean> {
@@ -58,7 +53,7 @@ export class CartRepositoryImpl implements CartRepository {
 
   async saveProduct(product: CartItemsEntity): Promise<CartItemsEntity> {
     const repo = this.getCartProductRepo();
-    const data = this.mapper.cartProductToPersistence(product);
+    const data = CartMapper.cartProductToPersistence(product);
     const model = repo.create(data as CartItemsPersistenceEntity);
 
     const existing = await repo.findOne({
@@ -72,18 +67,18 @@ export class CartRepositoryImpl implements CartRepository {
       existing.quantity = product.getQuantity();
       existing.value = product.getPrice();
       const saved = await repo.save(existing);
-      return this.mapper.cartProductToDomain(saved);
+      return CartMapper.cartProductToDomain(saved);
     }
 
     const saved = await repo.save(model);
-    return this.mapper.cartProductToDomain(saved);
+    return CartMapper.cartProductToDomain(saved);
   }
 
   async findProductsByCartId(cartId: string): Promise<CartItemsEntity[]> {
     const models = await this.getCartProductRepo().find({
       where: { cartId },
     });
-    return models.map((m) => this.mapper.cartProductToDomain(m));
+    return models.map((m) => CartMapper.cartProductToDomain(m));
   }
 
   async findProductInCart(
@@ -93,7 +88,7 @@ export class CartRepositoryImpl implements CartRepository {
     const model = await this.getCartProductRepo().findOne({
       where: { cartId, productId },
     });
-    return model ? this.mapper.cartProductToDomain(model) : null;
+    return model ? CartMapper.cartProductToDomain(model) : null;
   }
 
   async deleteProduct(id: string): Promise<boolean> {

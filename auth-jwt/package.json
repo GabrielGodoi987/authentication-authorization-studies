@@ -4,8 +4,9 @@
   "description": "",
   "main": "app.ts",
   "scripts": {
-    "test": "jest --selectProjects unit",
-    "test:e2e": "jest --selectProjects e2e",
+    "test": "npm run test:unit",
+    "test:unit": "jest --config jest.unit.config.json --runInBand",
+    "test:e2e": "jest --config jest.e2e.config.json",
     "test:all": "jest",
     "start:dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/app.ts",
     "typeorm": "typeorm-ts-node-commonjs",

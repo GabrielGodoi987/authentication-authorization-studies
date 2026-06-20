@@ -1,0 +1,20 @@
+{
+  "displayName": "unit",
+  "testMatch": [
+    "<rootDir>/src/**/*.spec.ts",
+    "<rootDir>/test/unit/**/*.spec.ts"
+  ],
+  "transform": {
+    "^.+\\.ts$": [
+      "ts-jest",
+      {
+        "diagnostics": {
+          "ignoreCodes": [151002, 2576]
+        }
+      }
+    ]
+  },
+  "moduleNameMapper": {
+    "^uuid$": "<rootDir>/__mocks__/uuid.ts"
+  }
+}

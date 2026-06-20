@@ -1,3 +1,4 @@
+import { v4 } from "uuid";
 import { UserEntity } from "../../../src/domain/entities/user.entity";
 import { UserMapper } from "../../../src/infrastructure/mappers/user.mapper";
 import { UserPersistenceEntity } from "../../../src/infrastructure/persistence/user-persistence.entity";
@@ -21,7 +22,8 @@ function makeDomain(
     password: string;
   }> = {},
 ): UserEntity {
-  return UserEntity.create(
+  return new UserEntity(
+    v4(),
     overrides.name ?? "John Doe",
     overrides.email ?? "john@doe.com",
     overrides.password ?? "Strong1Pass",

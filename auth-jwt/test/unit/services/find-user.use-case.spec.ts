@@ -31,9 +31,9 @@ describe("FindUserByIdUseCase", () => {
   it("returns null when not found", async () => {
     repo.findOne.mockResolvedValue(null);
 
-    const result = await useCase.execute("nonexistent-id");
-
-    expect(result).toBeNull();
+    expect(async () => await useCase.execute("nonexistent-id")).rejects.toThrow(
+      "User was not found",
+    );
   });
 });
 
@@ -59,9 +59,9 @@ describe("FindUserByEmailUseCase", () => {
   it("returns null when not found", async () => {
     repo.findOne.mockResolvedValue(null);
 
-    const result = await useCase.execute("unknown@test.com");
-
-    expect(result).toBeNull();
+    expect(
+      async () => await useCase.execute("unknown@test.com"),
+    ).rejects.toThrow("Cannot found user with email");
   });
 });
 

@@ -1,6 +1,7 @@
+import { v4 } from "uuid";
 import { UserEntity } from "../../../src/domain/entities/user.entity";
 
-const DEFAULT_PASSWORD = "Strong1Pass";
+const STRONG_PASSWORD = "Strong1Pass";
 
 export function makeUser(
   overrides: Partial<{
@@ -9,9 +10,10 @@ export function makeUser(
     password: string;
   }> = {},
 ): UserEntity {
-  return UserEntity.create(
+  return new UserEntity(
+    v4(),
     overrides.name ?? "John Doe",
     overrides.email ?? "john@doe.com",
-    overrides.password ?? DEFAULT_PASSWORD,
+    overrides.password ?? STRONG_PASSWORD,
   );
 }

@@ -1,31 +1,36 @@
 @baseUrl = http://localhost:3000/carts
-@api-token= Jesus_is_my_savior
-@userId = 5c4b0ecc-9442-40fb-ab75-dc64e452af36
-
-@cartId = '';
-
-@productId = '';
+@api-token = Jesus_is_my_savior
+@access-token = paste-a-valid-access-token-here
+@cartId = paste-a-valid-cart-id-here
+@productId = 00000000-0000-0000-0000-000000000000
 
 ### Create a new cart
+# @name CreateCartAction
 POST {{baseUrl}}
 Content-Type: application/json
 x-api-token: {{api-token}}
-
+Authorization: Bearer {{access-token}}
 
 ### Get cart by user ID
+# @name FindAuthenticatedUserCartAction
 GET {{baseUrl}}
 Content-Type: application/json
 x-api-token: {{api-token}}
+Authorization: Bearer {{access-token}}
 
 ### Get cart by cart ID
+# @name FindCartByIdAction
 GET {{baseUrl}}/{{cartId}}
 Content-Type: application/json
 x-api-token: {{api-token}}
+Authorization: Bearer {{access-token}}
 
 ### Add product to cart
+# @name AddProductToCartAction
 POST {{baseUrl}}/{{cartId}}/products
 Content-Type: application/json
 x-api-token: {{api-token}}
+Authorization: Bearer {{access-token}}
 
 {
   "productId": "{{productId}}",
@@ -35,21 +40,26 @@ x-api-token: {{api-token}}
 }
 
 ### Delete cart by ID
+# @name DeleteCartAction
 DELETE {{baseUrl}}/{{cartId}}
 Content-Type: application/json
 x-api-token: {{api-token}}
-
+Authorization: Bearer {{access-token}}
 
 ### Update product quantity in cart
+# @name UpdateCartProductQuantityAction
 PUT {{baseUrl}}/{{cartId}}/products/{{productId}}
 Content-Type: application/json
 x-api-token: {{api-token}}
+Authorization: Bearer {{access-token}}
 
 {
   "quantity": 3
 }
 
 ### Remove product from cart
+# @name RemoveProductFromCartAction
 DELETE {{baseUrl}}/{{cartId}}/products/{{productId}}
 Content-Type: application/json
 x-api-token: {{api-token}}
+Authorization: Bearer {{access-token}}

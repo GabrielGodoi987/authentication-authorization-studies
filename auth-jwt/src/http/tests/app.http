@@ -1,13 +1,17 @@
 @baseurl = http://localhost:3000
-@token-jwt = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6IkdhYnJpZWwgR29kb2kiLCJ1c2VyRW1haWwiOiJnYWJyaWVsR29kb2lAZW1haWwuY29tIiwiaWF0IjoxNzgxMDQ4MDM3LCJleHAiOjE3ODEwNDgwOTcsInN1YiI6IjIzOGVlZGJkLWVkYzMtNDZkMS1iYWJiLTBhZmVlYjNjYTU3ZSJ9.qiQqOUXZvPpGAIlMfOxkYlyAMqsqHDJvyEcKhVfrfBKiDkbSB-TSQR5i6UoQmByoBcdQw_vSmK0Vtke_5gqkdqZShuHm1ZSb2qjpiqTLFPLHjn1vt-9_l60XiDMzozVdCm5GcCn5ZOJvrIHrEzUWtCts8XEvUE-q5lXq33HDSNqbt4wJIV5VUFACt-2maSRmgLFVe5kMUbAMlOs2trfryTInn-EtUeKayrUK4A3CWFxww63vFkmIRXPKiZHqUXFNk4-lpFBBBjQ1vkqZDuEFDUY438-78rUdWQvIK07XLFsBAH1QKY7FPZDfo_r8hr4IhGXYdPGJ2meBrZWJcS4rMw""
+@token-jwt = paste-a-valid-access-token-here
 @api-token = Jesus_is_my_savior
+
+### Health check
+# @name HealthCheckAction
+GET {{baseurl}}
 
 ### Create a new user
 # @name CreateUserAction
 POST {{baseurl}}/users
 Content-Type: application/json
-Cookie: accessToken={{token-jwt}}
 x-api-token: {{api-token}}
+Authorization: Bearer {{token-jwt}}
 
 {
   "name": "John Doe2 - teste",
@@ -18,23 +22,31 @@ x-api-token: {{api-token}}
 ### List all users
 # @name FindAllUsersAction
 GET {{baseurl}}/users
+Content-Type: application/json
+x-api-token: {{api-token}}
 Authorization: Bearer {{token-jwt}}
 
 ### Find user by ID
 # @name FindUserByIdAction
 GET {{baseurl}}/users/{{CreateUserAction.response.body.id}}
+Content-Type: application/json
+x-api-token: {{api-token}}
 Authorization: Bearer {{token-jwt}}
 
 ### Find user by email
 # @name FindUserByEmailAction
 GET {{baseurl}}/users/search?email={{CreateUserAction.response.body.email}}
+Content-Type: application/json
+x-api-token: {{api-token}}
 Authorization: Bearer {{token-jwt}}
 
 ### Update created user
 # @name UpdateUserAction
 PUT {{baseurl}}/users/{{CreateUserAction.response.body.id}}
 Content-Type: application/json
+x-api-token: {{api-token}}
 Authorization: Bearer {{token-jwt}}
+
 {
   "name": "John Doe Updated",
   "email": "johndoe@email.com"
@@ -43,4 +55,6 @@ Authorization: Bearer {{token-jwt}}
 ### Delete created user
 # @name DeleteUserAction
 DELETE {{baseurl}}/users/{{CreateUserAction.response.body.id}}
+Content-Type: application/json
+x-api-token: {{api-token}}
 Authorization: Bearer {{token-jwt}}

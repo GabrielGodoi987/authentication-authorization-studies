@@ -1,67 +1,95 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { UserRepository } from "../../../src/domain/repositories/user.repository";
 import { UserRepositoryImpl } from "../../../src/infrastructure/repositories/user.repository";
-import { AuthUseCase } from "../../../src/services/auth.use-cases";
+import {
+  AuthUseCase,
+  TokenProvider,
+} from "../../../src/services/auth.use-cases";
 import { makeUser } from "../unit-helpers/make-user.helper";
 
-jest.mock("bcrypt");
-jest.mock("jsonwebtoken");
-jest.mock("../../../src/infrastructure/repositories/user.repository");
-
 describe("AuthUseCase - unit test", () => {
-  let repo: jest.Mocked<UserRepositoryImpl>;
+  let repo: UserRepositoryImpl;
   let useCase: AuthUseCase;
+  let accessTokenSpy: jest.SpyInstance;
+  let refreshTokenSpy: jest.SpyInstance;
 
   beforeEach(() => {
+    repo = new UserRepositoryImpl();
+    useCase = new AuthUseCase(repo);
+    accessTokenSpy = jest.spyOn(TokenProvider, "generateAccessToken");
+    refreshTokenSpy = jest.spyOn(TokenProvider, "generateRefreshToken");
+  });
+
+  afterEach(() => {
     jest.clearAllMocks();
-    repo = new UserRepositoryImpl() as jest.Mocked<UserRepositoryImpl>;
-    useCase = new AuthUseCase(repo as unknown as UserRepository);
   });
 
   it("returns user and token when credentials are valid", async () => {
     const user = makeUser();
-    repo.findOne.mockResolvedValue(user);
-    (bcrypt.compareSync as jest.Mock).mockReturnValue(true);
-    (jwt.sign as jest.Mock).mockReturnValue("fake-jwt-token");
+    jest.spyOn(UserRepositoryImpl.prototype, "findOne").mockResolvedValue(user);
+    (bcrypt.compare as jest.Mock) = jest.fn().mockResolvedValue(true);
+
+    accessTokenSpy.mockReturnValue("Fake-jwt-accessToken");
+    refreshTokenSpy.mockReturnValue("Fake-jwt-refreshToken");
 
     const result = await useCase.execute(user.getEmail(), "Strong1Pass");
 
     expect(repo.findOne).toHaveBeenCalledTimes(1);
-    expect(bcrypt.compareSync).toHaveBeenCalledWith(
+
+    expect(bcrypt.compare).toHaveBeenCalledWith(
       "Strong1Pass",
       user.getPassword(),
     );
-    expect(jwt.sign).toHaveBeenCalledWith(
-      { userName: user.getName(), userEmail: user.getEmail() },
-      expect.any(String),
-      { expiresIn: "1h" },
-    );
+
+    expect(refreshTokenSpy).toHaveBeenCalledWith({
+      id: user.getId(),
+      name: user.getName(),
+      email: user.getEmail(),
+    });
+
+    expect(accessTokenSpy).toHaveBeenCalledWith({
+      id: user.getId(),
+      name: user.getName(),
+      email: user.getEmail(),
+    });
+
     expect(result.user.toJSON()).toEqual(user.toJSON());
-    expect(result.token).toBe("fake-jwt-token");
+
+    expect(result.accessToken).toBe("Fake-jwt-accessToken");
+    expect(result.refreshToken).toBe("Fake-jwt-refreshToken");
+  });
+
+  it("should throw InvalidCredentials exception when password does not match", async () => {
+    const user = makeUser();
+    jest.spyOn(UserRepositoryImpl.prototype, "findOne").mockResolvedValue(user);
+    jest.spyOn(console, "error").mockReturnValue();
+
+    accessTokenSpy.mockReturnValue(null as any);
+    refreshTokenSpy.mockReturnValue(null as any);
+
+    (bcrypt.compare as jest.Mock) = jest.fn().mockResolvedValue(false);
+
+    await expect(
+      useCase.execute(user.getEmail(), "wrong-password"),
+    ).rejects.toThrow("Credential error");
+    expect(bcrypt.compare).toHaveBeenCalled();
+    expect(accessTokenSpy).not.toHaveBeenCalled();
+    expect(refreshTokenSpy).not.toHaveBeenCalled();
   });
 
   it("throws when user is not found", async () => {
-    repo.findOne.mockResolvedValue(null);
+    jest.spyOn(UserRepositoryImpl.prototype, "findOne").mockResolvedValue(null);
+    jest.spyOn(console, "error").mockReturnValue();
+
+    accessTokenSpy.mockReturnValue(null as any);
+
+    refreshTokenSpy.mockReturnValue(null as any);
 
     await expect(
       useCase.execute("unknown@email.com", "Strong1Pass"),
     ).rejects.toThrow("Invalid credentials");
 
-    expect(bcrypt.compareSync).not.toHaveBeenCalled();
-    expect(jwt.sign).not.toHaveBeenCalled();
-  });
-
-  it("throws when password does not match", async () => {
-    const user = makeUser();
-    repo.findOne.mockResolvedValue(user);
-    (bcrypt.compareSync as jest.Mock).mockReturnValue(false);
-
-    await expect(
-      useCase.execute(user.getEmail(), "wrong-password"),
-    ).rejects.toThrow("Invalid credentials");
-
-    expect(bcrypt.compareSync).toHaveBeenCalled();
-    expect(jwt.sign).not.toHaveBeenCalled();
+    expect(bcrypt.compare).not.toHaveBeenCalled();
+    expect(accessTokenSpy).not.toHaveBeenCalled();
+    expect(refreshTokenSpy).not.toHaveBeenCalled();
   });
 });

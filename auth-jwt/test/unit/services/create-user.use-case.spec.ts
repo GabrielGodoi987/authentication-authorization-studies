@@ -26,11 +26,14 @@ describe("CreateUserUseCase - unit test", () => {
     });
 
     expect(repo.findOne).toHaveBeenCalledTimes(1);
-    expect(repo.save).toHaveBeenCalledWith({
-      name: "John Doe",
-      email: "john@doe.com",
-      password: "Strong1Pass",
-    });
+
+    expect(repo.save).toHaveBeenCalledTimes(1);
+    const savedUser = repo.save.mock.calls[0][0];
+    expect(savedUser.getId()).toBe("00000000-0000-0000-0000-000000000000");
+    expect(savedUser.getName()).toBe(user.getName());
+    expect(savedUser.getEmail()).toBe(user.getEmail());
+    expect(savedUser.getPassword()).toBe("Strong1Pass");
+
     expect(result.toJSON()).toMatchObject({
       name: "John Doe",
       email: "john@doe.com",
