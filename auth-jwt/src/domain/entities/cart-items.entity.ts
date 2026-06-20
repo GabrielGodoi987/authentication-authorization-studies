@@ -1,4 +1,13 @@
 import { v4 } from "uuid";
+import {
+  CartItemCartIdCannotBeEmptyException,
+  CartItemIdCannotBeEmptyException,
+  CartItemPriceCannotBeNegativeException,
+  CartItemProductIdCannotBeEmptyException,
+  CartItemQuantityMustBePositiveException,
+  InvalidCartItemPriceException,
+  InvalidCartItemQuantityException,
+} from "../domain-exceptions/cart.exceptions";
 
 export class CartItemsEntity {
   private id: string;
@@ -15,11 +24,18 @@ export class CartItemsEntity {
     unitPrice: number,
     cartId: string,
   ) {
+    this.validateId(id);
+    this.validateProductId(productId);
+    this.validateCartId(cartId);
+    this.validateQuantity(quantity);
+    this.validatePrice(unitPrice);
+
     this.id = id || v4();
     this.productId = productId;
     this.cartId = cartId;
     this.quantity = quantity;
     this.unitPrice = unitPrice;
+    this.value = this.quantity * this.unitPrice;
   }
 
   getId(): string {
@@ -27,6 +43,7 @@ export class CartItemsEntity {
   }
 
   setId(id: string): void {
+    this.validateId(id);
     this.id = id;
   }
 
@@ -35,6 +52,7 @@ export class CartItemsEntity {
   }
 
   setProductId(productId: string): void {
+    this.validateProductId(productId);
     this.productId = productId;
   }
 
@@ -43,7 +61,7 @@ export class CartItemsEntity {
   }
 
   setQuantity(quantity: number): void {
-    this.quantity = quantity;
+    this.updateQuantity(quantity);
   }
 
   getPrice(): number {
@@ -51,6 +69,8 @@ export class CartItemsEntity {
   }
 
   setPrice(value: number): void {
+    this.validatePrice(value);
+    this.unitPrice = value;
     this.value = this.quantity * value;
   }
 
@@ -63,6 +83,7 @@ export class CartItemsEntity {
   }
 
   setCartId(cartId: string): void {
+    this.validateCartId(cartId);
     this.cartId = cartId;
   }
 
@@ -71,10 +92,12 @@ export class CartItemsEntity {
   }
 
   setValue(value: number): void {
+    this.validatePrice(value);
     this.value = value;
   }
 
   public updateQuantity(newQuantity: number) {
+    this.validateQuantity(newQuantity);
     this.quantity = newQuantity;
     this.value = this.quantity * this.unitPrice;
   }
@@ -87,5 +110,52 @@ export class CartItemsEntity {
       unitPrice: this.unitPrice,
       value: this.value,
     };
+  }
+
+  private validateId(id: string | null): void {
+    if (id !== null && id.trim() === "") {
+      throw new CartItemIdCannotBeEmptyException();
+    }
+  }
+
+  private validateProductId(productId: string): void {
+    if (!productId || productId.trim() === "") {
+      throw new CartItemProductIdCannotBeEmptyException();
+    }
+  }
+
+  private validateCartId(cartId: string): void {
+    if (!cartId || cartId.trim() === "") {
+      throw new CartItemCartIdCannotBeEmptyException();
+    }
+  }
+
+  private validateQuantity(quantity: number): void {
+    if (
+      typeof quantity !== "number" ||
+      Number.isNaN(quantity) ||
+      !Number.isFinite(quantity) ||
+      !Number.isInteger(quantity)
+    ) {
+      throw new InvalidCartItemQuantityException();
+    }
+
+    if (quantity <= 0) {
+      throw new CartItemQuantityMustBePositiveException();
+    }
+  }
+
+  private validatePrice(price: number): void {
+    if (
+      typeof price !== "number" ||
+      Number.isNaN(price) ||
+      !Number.isFinite(price)
+    ) {
+      throw new InvalidCartItemPriceException();
+    }
+
+    if (price < 0) {
+      throw new CartItemPriceCannotBeNegativeException();
+    }
   }
 }

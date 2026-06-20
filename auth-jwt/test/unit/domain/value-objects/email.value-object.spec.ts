@@ -7,7 +7,7 @@ describe("EmailValueObject", () => {
     expect(valueObject.getEmail()).toBe("gabrielgodoi@gmail.com");
   });
 
-  it.only("should throw an error when it is not a valid format", () => {
+  it("should throw an error when it is not a valid format", () => {
     expect(() => new EmailValueObject("gb.com")).toThrow(
       "Invalid email format",
     );

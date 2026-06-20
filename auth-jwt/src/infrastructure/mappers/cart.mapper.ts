@@ -28,11 +28,13 @@ export class CartMapper {
   public static cartProductToDomain(
     persistence: CartItemsPersistenceEntity,
   ): CartItemsEntity {
+    const unitPrice = persistence.value / persistence.quantity;
+
     return new CartItemsEntity(
       persistence.id,
       persistence.productId,
       persistence.quantity,
-      persistence.value,
+      unitPrice,
       persistence.cartId,
     );
   }

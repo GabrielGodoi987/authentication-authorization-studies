@@ -1,9 +1,4 @@
-let LogTracker: typeof import("../../../src/lib/log").LogTracker;
-
-async function reloadLogTracker() {
-  jest.resetModules();
-  ({ LogTracker } = await import("../../../src/lib/log"));
-}
+import { LogTracker } from "../../../src/lib/log";
 
 describe("LogTracker", () => {
   let debugSpy: jest.SpyInstance;
@@ -11,10 +6,9 @@ describe("LogTracker", () => {
   let warnSpy: jest.SpyInstance;
   let errorSpy: jest.SpyInstance;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     process.env.LOG_LEVEL = "debug";
     process.env.NODE_ENV = "test";
-    await reloadLogTracker();
 
     debugSpy = jest.spyOn(console, "debug").mockImplementation();
     infoSpy = jest.spyOn(console, "info").mockImplementation();
@@ -29,22 +23,17 @@ describe("LogTracker", () => {
 
   describe("log levels", () => {
     it.each([
-      { level: "debug", message: "debug message", spyKey: "debugSpy" },
-      { level: "info", message: "info message", spyKey: "infoSpy" },
-      { level: "warn", message: "warn message", spyKey: "warnSpy" },
-      { level: "error", message: "error message", spyKey: "errorSpy" },
+      { level: "debug", message: "debug message", getSpy: () => debugSpy },
+      { level: "info", message: "info message", getSpy: () => infoSpy },
+      { level: "warn", message: "warn message", getSpy: () => warnSpy },
+      { level: "error", message: "error message", getSpy: () => errorSpy },
     ])(
       "should call the right console method for $level",
-      ({ level, message, spyKey }) => {
-        const spy =
-          spyKey === "debugSpy"
-            ? debugSpy
-            : spyKey === "infoSpy"
-              ? infoSpy
-              : spyKey === "warnSpy"
-                ? warnSpy
-                : errorSpy;
+      ({ level, message, getSpy }) => {
+        const spy = getSpy();
+
         (LogTracker as any)[level](message);
+
         expect(spy).toHaveBeenCalledTimes(1);
         const output = spy.mock.calls[0][0] as string;
         expect(output).toContain(`[${level.toUpperCase()}]`);
@@ -98,9 +87,8 @@ describe("LogTracker", () => {
   });
 
   describe("level filtering", () => {
-    it("should skip debug when LOG_LEVEL=info", async () => {
+    it("should skip debug when LOG_LEVEL=info", () => {
       process.env.LOG_LEVEL = "info";
-      await reloadLogTracker();
 
       LogTracker.debug("should not appear");
       LogTracker.info("should appear");
@@ -108,9 +96,8 @@ describe("LogTracker", () => {
       expect(console.info).toHaveBeenCalledTimes(1);
     });
 
-    it("should skip info when LOG_LEVEL=warn", async () => {
+    it("should skip info when LOG_LEVEL=warn", () => {
       process.env.LOG_LEVEL = "warn";
-      await reloadLogTracker();
 
       LogTracker.info("should not appear");
       LogTracker.warn("should appear");
@@ -118,9 +105,8 @@ describe("LogTracker", () => {
       expect(console.warn).toHaveBeenCalledTimes(1);
     });
 
-    it("should log everything when LOG_LEVEL=debug", async () => {
+    it("should log everything when LOG_LEVEL=debug", () => {
       process.env.LOG_LEVEL = "debug";
-      await reloadLogTracker();
 
       LogTracker.debug("debug");
       LogTracker.info("info");
@@ -134,9 +120,8 @@ describe("LogTracker", () => {
   });
 
   describe("production mode", () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       process.env.NODE_ENV = "production";
-      await reloadLogTracker();
     });
 
     afterEach(() => {

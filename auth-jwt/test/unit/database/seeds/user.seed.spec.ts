@@ -64,6 +64,7 @@ describe("seedUsers", () => {
   });
 
   it("should return an error message when save fails", async () => {
+    jest.spyOn(console, "error").mockReturnValue();
     mockRepo.count.mockResolvedValue(0);
     mockRepo.save.mockRejectedValue(new Error("DB connection lost"));
 

@@ -1,3 +1,5 @@
+import { InvalidEmailException } from "../domain-exceptions/email.exception";
+
 export class EmailValueObject {
   private readonly email: string;
 
@@ -5,7 +7,7 @@ export class EmailValueObject {
     const isValidEmail = this.validateEmail(email);
 
     if (!isValidEmail) {
-      throw new Error("Invalid email format");
+      throw new InvalidEmailException({ message: "Invalid email format" });
     }
 
     this.email = email;

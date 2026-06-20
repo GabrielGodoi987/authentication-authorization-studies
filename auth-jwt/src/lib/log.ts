@@ -9,11 +9,16 @@ const LOG_LEVELS: Record<LogLevel, number> = {
   error: 3,
 };
 
-const ENV = (process.env.NODE_ENV || "development") as
-  | "development"
-  | "production"
-  | "test";
-const CURRENT_LEVEL = LOG_LEVELS[process.env.LOG_LEVEL as LogLevel] ?? LOG_LEVELS.info;
+function getEnv(): "development" | "production" | "test" {
+  return (process.env.NODE_ENV || "development") as
+    | "development"
+    | "production"
+    | "test";
+}
+
+function getCurrentLevel(): number {
+  return LOG_LEVELS[process.env.LOG_LEVEL as LogLevel] ?? LOG_LEVELS.info;
+}
 
 function getCaller(): string {
   const stack = new Error().stack;
@@ -41,8 +46,15 @@ function formatMessage(
   const prefix = `${timestamp} [${level.toUpperCase()}]`;
   const callerStr = caller ? ` (${caller})` : "";
 
-  if (ENV === "production") {
-    return JSON.stringify({ timestamp, level, message, caller, error: error?.message, ...meta });
+  if (getEnv() === "production") {
+    return JSON.stringify({
+      timestamp,
+      level,
+      message,
+      caller,
+      error: error?.message,
+      ...meta,
+    });
   }
 
   let output = `${prefix}${callerStr} ${message}`;
@@ -57,22 +69,22 @@ function formatMessage(
 
 export class LogTracker {
   static debug(message: string, meta?: LogMeta): void {
-    if (CURRENT_LEVEL > LOG_LEVELS.debug) return;
+    if (getCurrentLevel() > LOG_LEVELS.debug) return;
     console.debug(formatMessage("debug", message, undefined, meta));
   }
 
   static info(message: string, meta?: LogMeta): void {
-    if (CURRENT_LEVEL > LOG_LEVELS.info) return;
+    if (getCurrentLevel() > LOG_LEVELS.info) return;
     console.info(formatMessage("info", message, undefined, meta));
   }
 
   static warn(message: string, error?: Error, meta?: LogMeta): void {
-    if (CURRENT_LEVEL > LOG_LEVELS.warn) return;
+    if (getCurrentLevel() > LOG_LEVELS.warn) return;
     console.warn(formatMessage("warn", message, error, meta));
   }
 
   static error(message: string, error?: Error, meta?: LogMeta): void {
-    if (CURRENT_LEVEL > LOG_LEVELS.error) return;
+    if (getCurrentLevel() > LOG_LEVELS.error) return;
     console.error(formatMessage("error", message, error, meta));
   }
 }

@@ -1,11 +1,14 @@
+import { InvalidPasswordError } from "../domain-exceptions/password.exception";
+
 export class PasswordValueObject {
   private readonly password: string;
 
   constructor(password: string) {
     if (!this.validatePassword(password)) {
-      throw new Error(
-        "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number",
-      );
+      throw new InvalidPasswordError({
+        message:
+          "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number",
+      });
     }
     this.password = password;
   }
