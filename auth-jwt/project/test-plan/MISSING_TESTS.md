@@ -2,28 +2,11 @@
 
 ## 📋 Arquivos sem Testes Diretos
 
-### 🏛️ Domain Layer - Domain Exceptions
-
-- [ ] `src/domain/domain-exceptions/cart.exceptions.ts` - Exceções de domínio: carrinho
-- [ ] `src/domain/domain-exceptions/email.exception.ts` - Exceção de domínio: email inválido
-- [ ] `src/domain/domain-exceptions/password.exception.ts` - Exceção de domínio: senha inválida
-- [ ] `src/domain/domain-exceptions/product.exceptions.ts` - Exceções de domínio: produto
-- [ ] `src/domain/domain-exceptions/user.exceptions.ts` - Exceções de domínio: usuário
-
 ### 🔄 Mappers (Infrastructure)
 
 - [ ] `src/infrastructure/mappers/cart.mapper.ts` - Mapeador: domain ↔ persistência (carrinho)
 - [ ] `src/infrastructure/mappers/product.mapper.ts` - Mapeador: domain ↔ persistência (produto)
 
-### 🗃️ Repositories (Infrastructure)
-
-- [ ] `src/infrastructure/repositories/cart.repository.ts` - Repositório de carrinhos (infraestrutura)
-- [ ] `src/infrastructure/repositories/user.repository.ts` - Repositório de usuários (infraestrutura)
-
-### 📦 DTOs (Services)
-
-- [ ] `src/services/dto/create-user.dto.ts` - DTO de criação de usuário
-- [ ] `src/services/dto/update-user.dto.ts` - DTO de atualização de usuário
 
 ### 🌐 Testes E2E
 
@@ -66,6 +49,7 @@
 - [x] `src/http/controllers/middlewares/api-token.middleware.ts` — `test/unit/http/controllers/middlewares/api-token.middleware.spec.ts`
 - [x] `src/http/controllers/middlewares/auth.middleware.ts` — `test/unit/http/controllers/middlewares/auth.middleware.spec.ts`
 - [x] `src/http/controllers/middlewares/cart.middleware.ts` — `test/unit/http/controllers/middlewares/cart.middleware.spec.ts`
+- [ ] `src/http/controllers/middlewares/verify-role.middleware.ts` — `test/unit/http/controllers/middlewares/verify-role.middleware.ts`
 
 ### ⚠️ HTTP Exceptions
 
@@ -100,6 +84,7 @@
 - [x] `src/services/auth.use-cases.ts` — `test/unit/services/auth.use-case.spec.ts`
 - [x] `src/services/user.use-cases.ts` — `test/unit/services/create-user.use-case.spec.ts`, `update-user.use-case.spec.ts`, `delete-user.use-case.spec.ts`, `find-user.use-case.spec.ts`
 - [x] `src/services/cart.use-cases.ts` — `test/unit/services/cart.use-cases.spec.ts`
+- [x] `src/services/product.use-cases.ts` — `test/unit/services/product.use-cases.spec.ts`
 
 ### 🛠️ Utilities
 

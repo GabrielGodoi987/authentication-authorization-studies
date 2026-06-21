@@ -10,7 +10,6 @@ import {
   UserAlreadyExistsExceptions,
   UserNotFoundException,
 } from "../http/exceptions/user.exceptions";
-import { UpdateUserDto } from "./dto/update-user.dto";
 
 export class CreateUserUseCase {
   constructor(private readonly userRepo: UserRepository) {}
@@ -77,7 +76,14 @@ export class FindAllUsersUseCase {
 export class UpdateUserUseCase {
   constructor(private readonly userRepo: UserRepository) {}
 
-  async execute(id: string, data: UpdateUserDto): Promise<UserEntity | null> {
+  async execute(
+    id: string,
+    data: Partial<{
+      name: string;
+      email: string;
+      password: string;
+    }>,
+  ): Promise<UserEntity | null> {
     const user = await this.userRepo.findOne(new FindUserByIdSpec(id));
 
     if (!user) {

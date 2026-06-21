@@ -17,7 +17,8 @@
     "schema:drop": "npm run typeorm -- schema:drop -d src/database/source.ts",
     "seed": "ts-node src/database/seeds/main.ts",
     "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix"
+    "lint:fix": "eslint . --ext .ts --fix",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",

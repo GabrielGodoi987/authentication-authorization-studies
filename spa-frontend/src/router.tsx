@@ -1,13 +1,13 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom"
-import ProductsPage from "@/pages/productsPage"
-import LoginPage from "@/pages/loginPage"
-import CartPage from "@/pages/cartPage"
-import AccountPage from "@/pages/accountPage"
-import ProcessingPaymentPage from "@/pages/processingPayment"
-import PaymentSuccessPage from "@/pages/paymentSuccessPage"
-import LogoutPage from "@/pages/logoutPage"
-import RegisterPage from "@/pages/registerPage"
-import { ProtectedRoute } from "@/components/guards/protected-route"
+import { ProtectedRoute } from "@/components/guards/protected-route";
+import AccountPage from "@/pages/customer/accountPage";
+import CartPage from "@/pages/customer/cartPage";
+import PaymentSuccessPage from "@/pages/customer/paymentSuccessPage";
+import ProcessingPaymentPage from "@/pages/customer/processingPayment";
+import RegisterPage from "@/pages/customer/registerPage";
+import LoginPage from "@/pages/loginPage";
+import LogoutPage from "@/pages/logoutPage";
+import ProductsPage from "@/pages/productsPage";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 const router = createBrowserRouter([
   {
@@ -58,8 +58,8 @@ const router = createBrowserRouter([
     path: "/sair",
     element: <LogoutPage />,
   },
-])
+]);
 
 export function Router() {
-  return <RouterProvider router={router} />
+  return <RouterProvider router={router} />;
 }

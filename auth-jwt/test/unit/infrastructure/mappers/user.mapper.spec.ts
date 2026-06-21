@@ -1,7 +1,7 @@
 import { v4 } from "uuid";
-import { UserEntity } from "../../../src/domain/entities/user.entity";
-import { UserMapper } from "../../../src/infrastructure/mappers/user.mapper";
-import { UserPersistenceEntity } from "../../../src/infrastructure/persistence/user-persistence.entity";
+import { UserEntity } from "../../../../src/domain/entities/user.entity";
+import { UserMapper } from "../../../../src/infrastructure/mappers/user.mapper";
+import { UserPersistenceEntity } from "../../../../src/infrastructure/persistence/user-persistence.entity";
 
 function makePersistence(
   overrides: Partial<UserPersistenceEntity> = {},

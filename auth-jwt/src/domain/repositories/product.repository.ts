@@ -1,7 +1,6 @@
 import { ProductPersistenceEntity } from "../../infrastructure/persistence/product-persistence.entity";
 import { Specification } from "../../lib/specifications-base/base.specifications";
 import { ProductEntity } from "../entities/product.entity";
-import { UserEntity } from "../entities/user.entity";
 
 export interface ProductRepository {
   findAll({
@@ -13,10 +12,8 @@ export interface ProductRepository {
   }): Promise<ProductEntity[]>;
   findOne(
     spec: Specification<ProductPersistenceEntity>,
-  ): Promise<UserEntity | null>;
-  update(
-    id: string,
-    data: Partial<ProductEntity>,
   ): Promise<ProductEntity | null>;
+  save(productEntity: ProductEntity): Promise<ProductEntity>;
+  update(data: ProductEntity): Promise<ProductEntity | null>;
   delete(id: string): Promise<boolean>;
 }
