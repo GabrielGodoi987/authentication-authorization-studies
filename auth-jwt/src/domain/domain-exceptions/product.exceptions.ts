@@ -21,7 +21,17 @@ export class InvalidProductPriceException extends Error {
 
 export class ProductPriceCannotBeNegativeException extends Error {
   constructor(params?: { message?: string; options?: ErrorOptions }) {
-    super(params?.message || "Product price cannot be negative", params?.options);
+    super(
+      params?.message || "Product price cannot be negative",
+      params?.options,
+    );
     this.name = "ProductPriceCannotBeNegativeException";
+  }
+}
+
+export class ProductNotFoundException extends Error {
+  constructor(params?: { message?: string; options?: ErrorOptions }) {
+    super(params?.message || "Product was not found", params?.options);
+    this.name = "ProductNotFoundException";
   }
 }
