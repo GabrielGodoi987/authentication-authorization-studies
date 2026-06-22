@@ -8,7 +8,13 @@ import { CreateProductDto, UpdateProductDto } from "./dto/product.dto";
 export class FindAllProductsUseCase {
   constructor(private readonly productRepository: ProductRepository) {}
 
-  async execute({ skip = 0, take = 10 }: { skip: number; take: number }) {
+  async execute({
+    skip = 0,
+    take = 10,
+  }: {
+    skip: number;
+    take: number;
+  }): Promise<ProductEntity[]> {
     try {
       return await this.productRepository.findAll({ skip, take });
     } catch (error: any) {
@@ -22,7 +28,7 @@ export class FindAllProductsUseCase {
 export class FindByIdProductUseCase {
   constructor(private readonly productRepository: ProductRepository) {}
 
-  async execute({ id }: { id: string }) {
+  async execute({ id }: { id: string }): Promise<ProductEntity> {
     try {
       const product = await this.productRepository.findOne(
         new FindProductByIdSpec(id),
@@ -46,7 +52,7 @@ export class FindByIdProductUseCase {
 export class CreateProductUseCase {
   constructor(private readonly productRepository: ProductRepository) {}
 
-  async execute(createProductDto: CreateProductDto) {
+  async execute(createProductDto: CreateProductDto): Promise<ProductEntity> {
     const { name, price } = createProductDto;
 
     try {
@@ -64,7 +70,10 @@ export class CreateProductUseCase {
 export class UpdateProductUseCase {
   constructor(private readonly productRepository: ProductRepository) {}
 
-  async execute(id: string, updateProductdto: UpdateProductDto) {
+  async execute(
+    id: string,
+    updateProductdto: UpdateProductDto,
+  ): Promise<ProductEntity | null> {
     const doesProductExists = await this.productRepository.findOne(
       new FindProductByIdSpec(id),
     );
@@ -92,7 +101,7 @@ export class UpdateProductUseCase {
 export class DeleteProductUseCase {
   constructor(private readonly productRepository: ProductRepository) {}
 
-  async execute(id: string) {
+  async execute({ id }: { id: string }) {
     try {
       const doesProductExists = await this.productRepository.findOne(
         new FindProductByIdSpec(id),

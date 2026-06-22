@@ -29,7 +29,7 @@ export class CartRepositoryImpl implements CartRepository {
   ): Promise<CartEntity | null> {
     const model = await this.getCartRepo().findOne({
       where: spec.toWhere(),
-      relations: ["cartProducts"],
+      relations: ["cartItems"],
     });
 
     return model ? CartMapper.toDomain(model) : null;
@@ -40,7 +40,7 @@ export class CartRepositoryImpl implements CartRepository {
   ): Promise<CartEntity[]> {
     const models = await this.getCartRepo().find({
       where: spec.toWhere() as any,
-      relations: ["cartProducts"],
+      relations: ["cartItems"],
     });
     return models.map((m) => CartMapper.toDomain(m));
   }

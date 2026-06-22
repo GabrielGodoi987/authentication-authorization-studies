@@ -15,6 +15,7 @@ import {
   RemoveProductFromCartUseCase,
   UpdateCartProductQuantityUseCase,
 } from "../../../src/services/cart.use-cases";
+import { context } from "../../helpers/context";
 
 function makeRepo(): jest.Mocked<CartRepository> {
   return {
@@ -51,7 +52,7 @@ describe("Cart use cases", () => {
     repo = makeRepo();
   });
 
-  describe("CreateCartUseCase", () => {
+  context("CreateCartUseCase", () => {
     it("should return existing cart when user already has one", async () => {
       const cart = makeCart();
       repo.findOne.mockResolvedValue(cart);
@@ -75,7 +76,7 @@ describe("Cart use cases", () => {
     });
   });
 
-  describe("FindCartByIdUseCase", () => {
+  context("FindCartByIdUseCase", () => {
     it("should return cart when found and owned by user", async () => {
       const cart = makeCart();
       repo.findOne.mockResolvedValue(cart);
@@ -105,7 +106,7 @@ describe("Cart use cases", () => {
     });
   });
 
-  describe("FindCartByUserIdUseCase", () => {
+  context("FindCartByUserIdUseCase", () => {
     it("should return cart by user id", async () => {
       const cart = makeCart();
       repo.findOne.mockResolvedValue(cart);
@@ -116,7 +117,7 @@ describe("Cart use cases", () => {
     });
   });
 
-  describe("AddProductToCartUseCase", () => {
+  context("AddProductToCartUseCase", () => {
     const data = {
       productId: "product-id",
       productName: "Product 1",
@@ -127,7 +128,9 @@ describe("Cart use cases", () => {
     it("should add a new product to cart", async () => {
       const cart = makeCart();
       const updatedCart = makeCart();
-      repo.findOne.mockResolvedValueOnce(cart).mockResolvedValueOnce(updatedCart);
+      repo.findOne
+        .mockResolvedValueOnce(cart)
+        .mockResolvedValueOnce(updatedCart);
       repo.saveProduct.mockImplementation(async (item) => item);
 
       const result = await new AddProductToCartUseCase(repo).execute(
@@ -149,7 +152,9 @@ describe("Cart use cases", () => {
       const existing = makeCartItem("cart-item-id", "product-id", 3);
       cart.getCartItems().push(existing);
       const updatedCart = makeCart();
-      repo.findOne.mockResolvedValueOnce(cart).mockResolvedValueOnce(updatedCart);
+      repo.findOne
+        .mockResolvedValueOnce(cart)
+        .mockResolvedValueOnce(updatedCart);
       repo.saveProduct.mockImplementation(async (item) => item);
 
       await new AddProductToCartUseCase(repo).execute(
@@ -179,12 +184,14 @@ describe("Cart use cases", () => {
     });
   });
 
-  describe("UpdateCartProductQuantityUseCase", () => {
+  context("UpdateCartProductQuantityUseCase", () => {
     it("should update product quantity", async () => {
       const cart = makeCart();
       const item = makeCartItem();
       const updatedCart = makeCart();
-      repo.findOne.mockResolvedValueOnce(cart).mockResolvedValueOnce(updatedCart);
+      repo.findOne
+        .mockResolvedValueOnce(cart)
+        .mockResolvedValueOnce(updatedCart);
       repo.findProductInCart.mockResolvedValue(item);
       repo.saveProduct.mockImplementation(async (product) => product);
 
@@ -215,12 +222,14 @@ describe("Cart use cases", () => {
     });
   });
 
-  describe("RemoveProductFromCartUseCase", () => {
+  context("RemoveProductFromCartUseCase", () => {
     it("should remove product from cart", async () => {
       const cart = makeCart();
       const item = makeCartItem();
       const updatedCart = makeCart();
-      repo.findOne.mockResolvedValueOnce(cart).mockResolvedValueOnce(updatedCart);
+      repo.findOne
+        .mockResolvedValueOnce(cart)
+        .mockResolvedValueOnce(updatedCart);
       repo.findProductInCart.mockResolvedValue(item);
       repo.deleteProduct.mockResolvedValue(true);
 
@@ -248,7 +257,7 @@ describe("Cart use cases", () => {
     });
   });
 
-  describe("DeleteCartUseCase", () => {
+  context("DeleteCartUseCase", () => {
     it("should delete cart when user owns it", async () => {
       repo.findOne.mockResolvedValue(makeCart());
       repo.delete.mockResolvedValue(true);

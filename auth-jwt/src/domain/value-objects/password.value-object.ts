@@ -14,6 +14,9 @@ export class PasswordValueObject {
   }
 
   private validatePassword(password: string): boolean {
+    if (password.startsWith("$2b$") || password.startsWith("$2a$")) {
+      return true;
+    }
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
     return passwordRegex.test(password);
   }

@@ -1,11 +1,11 @@
-import { UserRepository } from "../../../src/domain/repositories/user.repository";
-import { UserRepositoryImpl } from "../../../src/infrastructure/repositories/user.repository";
+import { UserRepository } from "../../../../src/domain/repositories/user.repository";
+import { UserRepositoryImpl } from "../../../../src/infrastructure/repositories/user.repository";
 import {
   FindAllUsersUseCase,
   FindUserByEmailUseCase,
   FindUserByIdUseCase,
-} from "../../../src/services/user.use-cases";
-import { makeUser } from "../unit-helpers/make-user.helper";
+} from "../../../../src/services/user.use-cases";
+import { makeUser } from "../../unit-helpers/make-user.helper";
 
 jest.mock("../../../src/infrastructure/repositories/user.repository");
 
