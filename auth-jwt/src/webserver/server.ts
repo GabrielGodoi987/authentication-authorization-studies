@@ -1,7 +1,7 @@
 import { app } from "../app";
 import { MainSeeder } from "../database/seeds/main";
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 export async function main(): Promise<void> {
   await MainSeeder();
   app.listen(PORT, () => {

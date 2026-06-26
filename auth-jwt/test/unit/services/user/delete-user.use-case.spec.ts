@@ -1,9 +1,6 @@
-import { UserRepository } from "../../../../src/domain/repositories/user.repository";
 import { UserRepositoryImpl } from "../../../../src/infrastructure/repositories/user.repository";
 import { DeleteUserUseCase } from "../../../../src/services/user.use-cases";
 import { makeUser } from "../../unit-helpers/make-user.helper";
-
-jest.mock("../../../src/infrastructure/repositories/user.repository");
 
 describe("DeleteUserUseCase", () => {
   let repo: jest.Mocked<UserRepositoryImpl>;
@@ -11,13 +8,13 @@ describe("DeleteUserUseCase", () => {
 
   beforeEach(() => {
     repo = new UserRepositoryImpl() as jest.Mocked<UserRepositoryImpl>;
-    useCase = new DeleteUserUseCase(repo as unknown as UserRepository);
+    useCase = new DeleteUserUseCase(repo);
   });
 
   it("should return true when user is deleted", async () => {
     const user = makeUser();
-    repo.findOne.mockResolvedValue(user);
-    repo.delete.mockResolvedValue(true);
+    jest.spyOn(UserRepositoryImpl.prototype, "findOne").mockResolvedValue(user);
+    jest.spyOn(UserRepositoryImpl.prototype, "delete").mockResolvedValue(true);
 
     const result = await useCase.execute("some-id");
     expect(repo.delete).toHaveBeenCalledWith("some-id");
@@ -25,8 +22,8 @@ describe("DeleteUserUseCase", () => {
     expect(result).toBe(true);
   });
 
-  it("should return false when user does not exist", async () => {
-    repo.delete.mockResolvedValue(false);
+  it("should throw UserNotFoundException when user does not exist", async () => {
+    jest.spyOn(UserRepositoryImpl.prototype, "findOne").mockResolvedValue(null);
 
     await expect(useCase.execute("nonexistent-id")).rejects.toThrow(
       "User was not found",

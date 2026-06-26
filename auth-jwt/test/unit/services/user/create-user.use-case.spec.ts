@@ -3,8 +3,6 @@ import { UserRepositoryImpl } from "../../../../src/infrastructure/repositories/
 import { CreateUserUseCase } from "../../../../src/services/user.use-cases";
 import { makeUser } from "../../unit-helpers/make-user.helper";
 
-jest.mock("../../../src/infrastructure/repositories/user.repository");
-
 describe("CreateUserUseCase - unit test", () => {
   let repo: jest.Mocked<UserRepositoryImpl>;
   let useCase: CreateUserUseCase;
@@ -14,10 +12,14 @@ describe("CreateUserUseCase - unit test", () => {
     useCase = new CreateUserUseCase(repo as unknown as UserRepository);
   });
 
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   it("should create a user when email does not exist", async () => {
     const user = makeUser();
-    repo.findOne.mockResolvedValue(null);
-    repo.save.mockResolvedValue(user);
+    jest.spyOn(UserRepositoryImpl.prototype, "findOne").mockResolvedValue(null);
+    jest.spyOn(UserRepositoryImpl.prototype, "save").mockResolvedValue(user);
 
     const result = await useCase.execute({
       name: "John Doe",
@@ -42,7 +44,8 @@ describe("CreateUserUseCase - unit test", () => {
   });
 
   it("should throw when email already exists", async () => {
-    repo.findOne.mockResolvedValue(makeUser());
+    jest.spyOn(UserRepositoryImpl.prototype, "findOne").mockResolvedValue(makeUser());
+    jest.spyOn(UserRepositoryImpl.prototype, "save");
 
     await expect(
       useCase.execute({

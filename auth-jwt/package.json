@@ -19,7 +19,7 @@
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "build": "tsc",
-    "prepare": "husky"
+    "prepare": "cd .. && npx husky"
   },
   "keywords": [],
   "author": "",

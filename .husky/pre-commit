@@ -1,0 +1,1 @@
+cd auth-jwt && npm run lint && npm run test:unit
